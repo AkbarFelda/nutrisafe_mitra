@@ -1,0 +1,34 @@
+import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:get_it/get_it.dart';
+
+import '../../core/network/api_config.dart';
+import '../../core/network/dio_factory.dart';
+import '../../core/storage/token_store.dart';
+import '../../features/auth/data/session_repository.dart';
+import '../../features/auth/presentation/session_cubit.dart';
+
+GetIt configureDependencies({
+  ApiConfig config = const ApiConfig(),
+  TokenStore? tokenStore,
+}) {
+  final di = GetIt.asNewInstance();
+  di.registerSingleton<ApiConfig>(config);
+  di.registerSingleton<TokenStore>(
+    tokenStore ?? SecureTokenStore(const FlutterSecureStorage()),
+  );
+  di.registerLazySingleton(() => SessionRepository(di<TokenStore>()));
+  di.registerLazySingleton(
+    () => SessionCubit(di<SessionRepository>()),
+    dispose: (cubit) => cubit.close(),
+  );
+  di.registerLazySingleton<Dio>(
+    () => createDio(
+      config: di<ApiConfig>(),
+      token: () => di<SessionRepository>().token,
+      onUnauthorized: di<SessionCubit>().invalidate,
+    ),
+    dispose: (dio) => dio.close(force: true),
+  );
+  return di;
+}
