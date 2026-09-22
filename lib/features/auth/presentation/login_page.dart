@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nutrisafe_mitra/app/theme/app_colors.dart';
 
 import 'widgets/auth_header.dart';
@@ -107,7 +108,7 @@ class _LoginPageState extends State<LoginPage> {
                     AuthAccountPrompt(
                       message: 'Belum Punya Akun? ',
                       linkLabel: 'Daftar',
-                      onTap: () => _showUnavailablePage('pendaftaran'),
+                      onTap: () => context.push('/register'),
                     ),
                   ],
                 ),
