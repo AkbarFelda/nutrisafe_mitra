@@ -13,11 +13,11 @@ void main() {
     await tester.pumpWidget(MitraApp(session: di<SessionCubit>()));
     await tester.pump(const Duration(milliseconds: 500));
     expect(find.text('Nutrisafe'), findsOneWidget);
-    expect(find.text('Masuk Mitra/SPPG'), findsNothing);
+    expect(find.text('Masuk Akun'), findsNothing);
     await tester.pump(const Duration(seconds: 1));
     await tester.pumpAndSettle();
-    expect(find.text('Masuk Mitra/SPPG'), findsOneWidget);
-    final context = tester.element(find.text('Masuk Mitra/SPPG'));
+    expect(find.text('Masuk Akun'), findsOneWidget);
+    final context = tester.element(find.text('Masuk Akun'));
     GoRouter.of(context).go('/');
     await tester.pumpAndSettle();
     expect(find.text('Beranda Mitra/SPPG'), findsNothing);
@@ -42,7 +42,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Keluar'));
     await tester.pumpAndSettle();
-    expect(find.text('Masuk Mitra/SPPG'), findsOneWidget);
+    expect(find.text('Masuk Akun'), findsOneWidget);
     await tester.pumpWidget(const SizedBox());
     await di.reset();
   });
