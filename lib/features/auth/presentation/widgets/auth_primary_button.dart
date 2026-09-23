@@ -13,9 +13,8 @@ class AuthPrimaryButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final double height;
   @override
-  Widget build(BuildContext context) => SizedBox(
-    width: double.infinity,
-    height: height,
+  Widget build(BuildContext context) => ConstrainedBox(
+    constraints: BoxConstraints(minWidth: double.infinity, minHeight: height),
     child: ElevatedButton(
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(

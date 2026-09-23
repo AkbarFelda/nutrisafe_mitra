@@ -1,3 +1,5 @@
+import '../../../core/widgets/responsive_content.dart';
+
 import 'package:flutter/material.dart';
 import 'package:nutrisafe_mitra/app/theme/app_colors.dart';
 
@@ -38,82 +40,80 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       backgroundColor: AppColors.loginBackground,
       body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const AuthHeader(),
-              const SizedBox(height: 36),
+        child: ResponsiveContent(
+          maxWidth: 600,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const AuthHeader(),
+                const SizedBox(height: 36),
 
-              const Text(
-                'Masuk Akun',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.heading,
+                const Text(
+                  'Masuk Akun',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.heading,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 24),
+                const SizedBox(height: 24),
 
-              AuthFormCard(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const AuthFieldLabel(
-                      text: 'Email',
-                      icon: Icons.mail_outline,
-                      color: AppColors.emailIcon,
-                      spacing: 8,
-                    ),
-                    TextFormField(
-                      controller: _emailController,
-                      keyboardType: TextInputType.emailAddress,
-                      textInputAction: TextInputAction.next,
-                      autofillHints: const [AutofillHints.username],
-                      autocorrect: false,
-                      decoration: const InputDecoration(hintText: 'Email'),
-                    ),
-                    const SizedBox(height: 16),
-
-                    const AuthFieldLabel(
-                      text: 'Password',
-                      icon: Icons.lock_outline,
-                      color: AppColors.passwordIcon,
-                      spacing: 8,
-                    ),
-                    AuthPasswordField(
-                      controller: _passwordController,
-                      hintText: 'Password',
-                      autofillHints: const [AutofillHints.password],
-                    ),
-                    const SizedBox(height: 8),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: AuthTextLink(
-                        label: 'Lupa password?',
-                        // TODO: Navigasi ketika halaman reset password tersedia.
-                        onTap: () => _showUnavailablePage('reset password'),
+                AuthFormCard(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      const AuthFieldLabel(
+                        text: 'Email',
+                        icon: Icons.mail_outline,
+                        color: AppColors.emailIcon,
+                        spacing: 8,
                       ),
-                    ),
-                    const SizedBox(height: 24),
+                      TextFormField(
+                        controller: _emailController,
+                        keyboardType: TextInputType.emailAddress,
+                        textInputAction: TextInputAction.next,
+                        autofillHints: const [AutofillHints.username],
+                        autocorrect: false,
+                        decoration: const InputDecoration(hintText: 'Email'),
+                      ),
+                      const SizedBox(height: 16),
 
-                    AuthPrimaryButton(
-                      label: 'Masuk',
-                      onPressed: () {
-                        /* TODO: Hubungkan layanan autentikasi. */
-                      },
-                    ),
-                    const SizedBox(height: 16),
+                      const AuthFieldLabel(
+                        text: 'Password',
+                        icon: Icons.lock_outline,
+                        color: AppColors.passwordIcon,
+                        spacing: 8,
+                      ),
+                      AuthPasswordField(
+                        controller: _passwordController,
+                        hintText: 'Password',
+                        autofillHints: const [AutofillHints.password],
+                      ),
+                      const SizedBox(height: 8),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: AuthTextLink(
+                          label: 'Lupa password?',
+                          // TODO: Navigasi ketika halaman reset password tersedia.
+                          onTap: () => _showUnavailablePage('reset password'),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
 
-                    AuthAccountPrompt(
-                      message: 'Belum Punya Akun? ',
-                      linkLabel: 'Daftar',
-                      onTap: () => _showUnavailablePage('pendaftaran'),
-                    ),
-                  ],
+                      AuthPrimaryButton(label: 'Masuk', onPressed: () {}),
+                      const SizedBox(height: 16),
+
+                      AuthAccountPrompt(
+                        message: 'Belum Punya Akun? ',
+                        linkLabel: 'Daftar',
+                        onTap: () => _showUnavailablePage('pendaftaran'),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              const SizedBox(height: 32),
-            ],
+                const SizedBox(height: 32),
+              ],
+            ),
           ),
         ),
       ),
