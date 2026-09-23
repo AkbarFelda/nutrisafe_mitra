@@ -107,7 +107,7 @@ class _LoginPageState extends State<LoginPage> {
                       AuthAccountPrompt(
                         message: 'Belum Punya Akun? ',
                         linkLabel: 'Daftar',
-                        onTap: () => _showUnavailablePage('pendaftaran'),
+                        onTap: () => context.push('/register'),
                       ),
                     ],
                   ),
