@@ -1,3 +1,5 @@
+import '../../../core/widgets/responsive_content.dart';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -20,81 +22,84 @@ class PartnershipStatusPage extends StatelessWidget {
       appBar: const PartnershipAppBar(title: 'Status Kemitraan'),
       body: SafeArea(
         top: false,
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(
-                      width: double.infinity,
-                      height: 190,
-                      child: Image.asset(
-                        AppAssets.bannerpartner,
-                        fit: BoxFit.cover,
+        child: ResponsiveContent(
+          maxWidth: 720,
+          child: Column(
+            children: [
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: double.infinity,
+                        height: 190,
+                        child: Image.asset(
+                          AppAssets.bannerpartner,
+                          fit: BoxFit.cover,
+                        ),
                       ),
-                    ),
 
-                    const SizedBox(height: 16),
-                    const PartnershipSummaryCard(),
-                    const SizedBox(height: 24),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 20),
-                      child: Row(
-                        children: [
-                          Flexible(
-                            child: Text(
-                              'Daftar SPPG',
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87,
+                      const SizedBox(height: 16),
+                      const PartnershipSummaryCard(),
+                      const SizedBox(height: 24),
+                      const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 20),
+                        child: Row(
+                          children: [
+                            Flexible(
+                              child: Text(
+                                'Daftar SPPG',
+                                style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.black87,
+                                ),
                               ),
                             ),
-                          ),
-                          SizedBox(width: 6),
-                          Icon(
-                            Icons.apartment,
-                            size: 18,
-                            color: Colors.blueGrey,
-                          ),
-                        ],
+                            SizedBox(width: 6),
+                            Icon(
+                              Icons.apartment,
+                              size: 18,
+                              color: Colors.blueGrey,
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
 
-                    const SizedBox(height: 10),
+                      const SizedBox(height: 10),
 
-                    SppgCard(
-                      onDetail: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Detail SPPG belum tersedia.'),
-                          ),
-                        );
-                      },
-                    ),
-                    const SizedBox(height: 24),
-                  ],
+                      SppgCard(
+                        onDetail: () {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text('Detail SPPG belum tersedia.'),
+                            ),
+                          );
+                        },
+                      ),
+                      const SizedBox(height: 24),
+                    ],
+                  ),
                 ),
               ),
-            ),
 
-            PartnershipRegistrationButton(
-              onPressed: () {
-                final router = GoRouter.maybeOf(context);
-                if (router != null) {
-                  router.push('/partnership/register');
-                } else {
-                  Navigator.of(context).push(
-                    MaterialPageRoute<void>(
-                      builder: (_) => const SppgRegistrationPage(),
-                    ),
-                  );
-                }
-              },
-            ),
-          ],
+              PartnershipRegistrationButton(
+                onPressed: () {
+                  final router = GoRouter.maybeOf(context);
+                  if (router != null) {
+                    router.push('/partnership/register');
+                  } else {
+                    Navigator.of(context).push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => const SppgRegistrationPage(),
+                      ),
+                    );
+                  }
+                },
+              ),
+            ],
+          ),
         ),
       ),
     );

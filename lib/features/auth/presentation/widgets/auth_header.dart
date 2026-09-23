@@ -4,8 +4,9 @@ import '../../../../app/theme/app_colors.dart';
 import '../../../../core/constants/app_assets.dart';
 
 class AuthHeader extends StatelessWidget {
-  const AuthHeader({super.key, this.leading});
+  const AuthHeader({super.key, this.leading, this.bannerHeight = 170});
   final Widget? leading;
+  final double bannerHeight;
   @override
   Widget build(BuildContext context) => Column(
     children: [
@@ -22,12 +23,14 @@ class AuthHeader extends StatelessWidget {
                 excludeFromSemantics: true,
               ),
           const SizedBox(width: 8),
-          const Text(
-            'NutriSafe MBG',
-            style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-              color: AppColors.heading,
+          const Flexible(
+            child: Text(
+              'NutriSafe MBG',
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+                color: AppColors.heading,
+              ),
             ),
           ),
         ],
@@ -35,7 +38,7 @@ class AuthHeader extends StatelessWidget {
       const SizedBox(height: 16),
       SizedBox(
         width: double.infinity,
-        height: 170,
+        height: bannerHeight,
         child: Image.asset(AppAssets.bannerlogin, fit: BoxFit.cover),
       ),
     ],

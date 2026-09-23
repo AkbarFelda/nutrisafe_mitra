@@ -88,28 +88,39 @@ class _SummaryCounts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Row(
-      children: [
-        Expanded(
-          child: _CountBadge(
-            label: 'Daftar SPPG',
-            count: '1',
-            icon: Icons.apartment,
-            color: Color(0xFFFF7A22),
-          ),
-        ),
-
-        SizedBox(width: 12),
-
-        Expanded(
-          child: _CountBadge(
-            label: 'Daftar Sekolah',
-            count: '2',
-            icon: Icons.school_outlined,
-            color: AppColors.primary,
-          ),
-        ),
-      ],
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final stacked =
+            constraints.maxWidth < 300 ||
+            MediaQuery.textScalerOf(context).scale(11) > 16;
+        final width = stacked
+            ? constraints.maxWidth
+            : (constraints.maxWidth - 12) / 2;
+        return Wrap(
+          spacing: 12,
+          runSpacing: 12,
+          children: [
+            SizedBox(
+              width: width,
+              child: const _CountBadge(
+                label: 'Daftar SPPG',
+                count: '1',
+                icon: Icons.apartment,
+                color: Color(0xFFFF7A22),
+              ),
+            ),
+            SizedBox(
+              width: width,
+              child: const _CountBadge(
+                label: 'Daftar Sekolah',
+                count: '2',
+                icon: Icons.school_outlined,
+                color: AppColors.primary,
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

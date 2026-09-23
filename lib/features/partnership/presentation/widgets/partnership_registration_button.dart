@@ -19,9 +19,11 @@ class PartnershipRegistrationButton extends StatelessWidget {
         ),
       ],
     ),
-    child: SizedBox(
-      width: double.infinity,
-      height: 46,
+    child: ConstrainedBox(
+      constraints: const BoxConstraints(
+        minWidth: double.infinity,
+        minHeight: 48,
+      ),
       child: ElevatedButton(
         onPressed: onPressed,
         style: ElevatedButton.styleFrom(
