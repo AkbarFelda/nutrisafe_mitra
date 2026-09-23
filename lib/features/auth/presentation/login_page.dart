@@ -1,6 +1,7 @@
 import '../../../core/widgets/responsive_content.dart';
 
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:nutrisafe_mitra/app/theme/app_colors.dart';
 
 import 'widgets/auth_header.dart';

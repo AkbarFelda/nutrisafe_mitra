@@ -5,6 +5,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/login_page.dart';
+import '../../features/auth/presentation/register_page.dart';
 import '../../features/auth/presentation/session_cubit.dart';
 import '../../features/splash/presentation/splash_screen.dart';
 
@@ -40,19 +41,24 @@ GoRouter createRouter(SessionCubit session, SessionRefresh refresh) => GoRouter(
   redirect: (context, state) {
     final status = session.state.status;
     final path = state.uri.path;
+    final isAuthPage = path == '/login' || path == '/register';
     if (!refresh.splashFinished ||
         status == SessionStatus.initial ||
         status == SessionStatus.failure) {
       return path == '/splash' ? null : '/splash';
     }
     if (status == SessionStatus.unauthenticated) {
-      return path == '/login' ? null : '/login';
+      return isAuthPage ? null : '/login';
     }
-    return path == '/splash' || path == '/login' ? '/' : null;
+    return path == '/splash' || isAuthPage ? '/' : null;
   },
   routes: [
     GoRoute(path: '/splash', builder: (context, state) => const SplashScreen()),
     GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
+    GoRoute(
+      path: '/register',
+      builder: (context, state) => const RegisterPage(),
+    ),
     ShellRoute(
       builder: (context, state, child) => Scaffold(
         appBar: AppBar(
