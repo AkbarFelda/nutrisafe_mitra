@@ -7,6 +7,8 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/login_page.dart';
 import '../../features/auth/presentation/register_page.dart';
 import '../../features/auth/presentation/session_cubit.dart';
+import '../../features/partnership/presentation/partnership_status_page.dart';
+import '../../features/partnership/presentation/sppg_registration_page.dart';
 import '../../features/splash/presentation/splash_screen.dart';
 
 class SessionRefresh extends ChangeNotifier {
@@ -59,6 +61,14 @@ GoRouter createRouter(SessionCubit session, SessionRefresh refresh) => GoRouter(
       path: '/register',
       builder: (context, state) => const RegisterPage(),
     ),
+    GoRoute(
+      path: '/partnership/status',
+      builder: (context, state) => const PartnershipStatusPage(),
+    ),
+    GoRoute(
+      path: '/partnership/register',
+      builder: (context, state) => const SppgRegistrationPage(),
+    ),
     ShellRoute(
       builder: (context, state, child) => Scaffold(
         appBar: AppBar(
@@ -75,8 +85,19 @@ GoRouter createRouter(SessionCubit session, SessionRefresh refresh) => GoRouter(
       routes: [
         GoRoute(
           path: '/',
-          builder: (context, state) =>
-              const Center(child: Text('Beranda Mitra/SPPG')),
+          builder: (context, state) => Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('Beranda Mitra/SPPG'),
+                const SizedBox(height: 16),
+                TextButton(
+                  onPressed: () => context.push('/partnership/status'),
+                  child: const Text('Status Kemitraan'),
+                ),
+              ],
+            ),
+          ),
         ),
       ],
     ),
