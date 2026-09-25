@@ -22,7 +22,7 @@ class SppgCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Icon SPPG
+
           const Padding(
             padding: EdgeInsets.only(top: 2),
             child: Icon(
@@ -34,7 +34,6 @@ class SppgCard extends StatelessWidget {
 
           const SizedBox(width: 12),
 
-          // Detail SPPG
           const Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -66,7 +65,6 @@ class SppgCard extends StatelessWidget {
 
           const SizedBox(width: 8),
 
-          // Tombol Detail
           SizedBox(
             height: 48,
             child: ElevatedButton(

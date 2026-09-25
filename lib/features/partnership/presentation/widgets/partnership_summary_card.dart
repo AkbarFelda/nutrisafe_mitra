@@ -34,7 +34,6 @@ class PartnershipSummaryCard extends StatelessWidget {
 
           SizedBox(height: 8),
 
-          // Status aktif
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -55,7 +54,6 @@ class PartnershipSummaryCard extends StatelessWidget {
 
           SizedBox(height: 16),
 
-          // Summary SPPG & Sekolah
           _SummaryCounts(),
         ],
       ),
@@ -78,10 +76,6 @@ class _StatusCheckIcon extends StatelessWidget {
     );
   }
 }
-
-// ============================================================
-// SUMMARY COUNTS
-// ============================================================
 
 class _SummaryCounts extends StatelessWidget {
   const _SummaryCounts();
@@ -124,10 +118,6 @@ class _SummaryCounts extends StatelessWidget {
     );
   }
 }
-
-// ============================================================
-// COUNT BADGE
-// ============================================================
 
 class _CountBadge extends StatelessWidget {
   const _CountBadge({
