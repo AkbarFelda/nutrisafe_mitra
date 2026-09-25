@@ -37,7 +37,7 @@ class _RegisterPageState extends State<RegisterPage> {
     setState(() => _submitted = true);
     if (!_formKey.currentState!.validate()) return;
     FocusScope.of(context).unfocus();
-    // TODO: Kirim data ke layanan pendaftaran ketika API tersedia.
+
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(

@@ -19,7 +19,7 @@ class SessionCubit extends Cubit<SessionState> {
     : super(const SessionState(SessionStatus.initial));
   final SessionRepository _repository;
   Future<void> _pending = Future<void>.value();
-  // Serialize storage operations so restoration cannot undo logout.
+
   Future<void> _enqueue(Future<SessionStatus?> Function() action) {
     _pending = _pending.then((_) async {
       if (isClosed) return;
@@ -46,7 +46,6 @@ class SessionCubit extends Cubit<SessionState> {
         : SessionStatus.unauthenticated,
   );
 
-  /// Integration hook after real authentication, never a fake login API.
   Future<void> acceptAuthenticatedToken(String token) => _enqueue(() async {
     await _repository.save(token);
     return SessionStatus.authenticated;
@@ -56,7 +55,7 @@ class SessionCubit extends Cubit<SessionState> {
     return SessionStatus.unauthenticated;
   });
   Future<void> invalidate(String rejectedToken) => _enqueue(() async {
-    // Ignore delayed 401 responses from an older session.
+
     if (_repository.token != rejectedToken) return null;
     await _repository.clear();
     return SessionStatus.unauthenticated;

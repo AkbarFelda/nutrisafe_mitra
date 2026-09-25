@@ -3,7 +3,6 @@ import 'package:dio/dio.dart';
 import '../error/app_failure.dart';
 import 'api_config.dart';
 
-/// Features decode their own response payloads. No credential logging.
 Dio createDio({
   required ApiConfig config,
   required String? Function() token,
