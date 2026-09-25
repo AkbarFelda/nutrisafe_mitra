@@ -95,7 +95,7 @@ class _LoginPageState extends State<LoginPage> {
                         alignment: Alignment.centerRight,
                         child: AuthTextLink(
                           label: 'Lupa password?',
-                          // TODO: Navigasi ketika halaman reset password tersedia.
+
                           onTap: () => _showUnavailablePage('reset password'),
                         ),
                       ),

@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 
-import 'app/app.dart';
-import 'app/di/dependencies.dart';
-import 'features/auth/presentation/session_cubit.dart';
+import 'app/theme/app_theme.dart';
+
+import 'package:nutrisafe_mitra/features/food_report/presentation/food_report_history_page.dart';
 
 void main() {
-  WidgetsFlutterBinding.ensureInitialized();
-  final dependencies = configureDependencies();
-  runApp(MitraApp(session: dependencies<SessionCubit>()));
+  runApp(
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.light,
+      home: Scaffold(body: const FoodReportHistoryPage()),
+    ),
+  );
 }

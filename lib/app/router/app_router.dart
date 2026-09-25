@@ -7,7 +7,12 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/login_page.dart';
 import '../../features/auth/presentation/register_page.dart';
 import '../../features/auth/presentation/session_cubit.dart';
+import '../../features/food_report/domain/food_report.dart';
+import '../../features/food_report/presentation/food_report_history_page.dart';
+import '../../features/partnership/presentation/partnership_status_page.dart';
+import '../../features/partnership/presentation/sppg_registration_page.dart';
 import '../../features/splash/presentation/splash_screen.dart';
+import '../../features/food_report/presentation/food_report_detail_page.dart';
 
 class SessionRefresh extends ChangeNotifier {
   SessionRefresh(SessionCubit session) {
@@ -18,7 +23,6 @@ class SessionRefresh extends ChangeNotifier {
   bool _splashFinished = false;
   bool get splashFinished => _splashFinished;
 
-  /// Presentation-only delay, started after the application's first frame.
   void startSplash() {
     if (_splashTimer != null || _splashFinished) return;
     _splashTimer = Timer(const Duration(milliseconds: 3000), () {
@@ -53,11 +57,30 @@ GoRouter createRouter(SessionCubit session, SessionRefresh refresh) => GoRouter(
     return path == '/splash' || isAuthPage ? '/' : null;
   },
   routes: [
+    GoRoute(
+      path: '/food-reports/history',
+      builder: (context, state) => const FoodReportHistoryPage(),
+    ),
+    GoRoute(
+      path: '/food-reports/detail',
+      redirect: (context, state) =>
+          state.extra is FoodReport ? null : '/food-reports/history',
+      builder: (context, state) =>
+          FoodReportDetailPage(report: state.extra! as FoodReport),
+    ),
     GoRoute(path: '/splash', builder: (context, state) => const SplashScreen()),
     GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
     GoRoute(
       path: '/register',
       builder: (context, state) => const RegisterPage(),
+    ),
+    GoRoute(
+      path: '/partnership/status',
+      builder: (context, state) => const PartnershipStatusPage(),
+    ),
+    GoRoute(
+      path: '/partnership/register',
+      builder: (context, state) => const SppgRegistrationPage(),
     ),
     ShellRoute(
       builder: (context, state, child) => Scaffold(
@@ -75,8 +98,23 @@ GoRouter createRouter(SessionCubit session, SessionRefresh refresh) => GoRouter(
       routes: [
         GoRoute(
           path: '/',
-          builder: (context, state) =>
-              const Center(child: Text('Beranda Mitra/SPPG')),
+          builder: (context, state) => Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text('Beranda Mitra/SPPG'),
+                const SizedBox(height: 16),
+                TextButton(
+                  onPressed: () => context.push('/partnership/status'),
+                  child: const Text('Status Kemitraan'),
+                ),
+                TextButton(
+                  onPressed: () => context.push('/food-reports/history'),
+                  child: const Text('Riwayat Laporan Makanan'),
+                ),
+              ],
+            ),
+          ),
         ),
       ],
     ),
