@@ -12,6 +12,7 @@ import '../../features/food_report/presentation/food_report_history_page.dart';
 import '../../features/partnership/presentation/partnership_status_page.dart';
 import '../../features/partnership/presentation/sppg_registration_page.dart';
 import '../../features/splash/presentation/splash_screen.dart';
+import '../../features/schools/presentation/school_list_page.dart';
 import '../../features/food_report/presentation/food_report_detail_page.dart';
 
 class SessionRefresh extends ChangeNotifier {
@@ -57,6 +58,10 @@ GoRouter createRouter(SessionCubit session, SessionRefresh refresh) => GoRouter(
     return path == '/splash' || isAuthPage ? '/' : null;
   },
   routes: [
+    GoRoute(
+      path: '/schools',
+      builder: (context, state) => const SchoolListPage(),
+    ),
     GoRoute(
       path: '/food-reports/history',
       builder: (context, state) => const FoodReportHistoryPage(),
@@ -104,6 +109,10 @@ GoRouter createRouter(SessionCubit session, SessionRefresh refresh) => GoRouter(
               children: [
                 const Text('Beranda Mitra/SPPG'),
                 const SizedBox(height: 16),
+                TextButton(
+                  onPressed: () => context.push('/schools'),
+                  child: const Text('Daftar Sekolah'),
+                ),
                 TextButton(
                   onPressed: () => context.push('/partnership/status'),
                   child: const Text('Status Kemitraan'),
