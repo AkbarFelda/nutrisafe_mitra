@@ -16,6 +16,17 @@ final reports = [
     school: 'Sekolah Baru',
     address: 'Alamat baru',
     portions: 20,
+    status: FoodReportStatus.received,
+    distributedPortions: 20,
+    studentsWithAllergies: 2,
+    allergies: const [FoodReportAllergy(name: 'Telur', students: 2)],
+    menuItems: const [
+      FoodReportMenuItem(
+        name: 'Menu Pengganti (Tanpa Telur)',
+        category: 'Khusus Siswa Alergi',
+        portions: 2,
+      ),
+    ],
   ),
 ];
 

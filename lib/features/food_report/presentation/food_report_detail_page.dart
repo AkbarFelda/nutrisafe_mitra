@@ -41,20 +41,13 @@ class FoodReportDetailPage extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // 1. Kartu Info Sekolah & Tanggal
-                _buildSchoolInfoCard(),
+                _SchoolInfoCard(report: report),
                 const SizedBox(height: 14),
-
-                // 2. Baris Tiga Kartu Metrik (Total Porsi, Terdistribusi, Siswa Alergi)
-                _buildMetricCards(),
+                _ReportMetrics(report: report),
                 const SizedBox(height: 16),
-
-                // 3. Kartu Tabel Menu Makanan
-                _buildMenuTableCard(),
+                _MenuTableCard(report: report),
                 const SizedBox(height: 16),
-
-                // 4. Kartu Foto Dokumentasi
-                _buildDocumentationCard(),
+                const _DocumentationCard(),
                 const SizedBox(height: 24),
               ],
             ),
@@ -63,9 +56,15 @@ class FoodReportDetailPage extends StatelessWidget {
       ),
     );
   }
+}
 
-  // --- WIDGET KARTU INFORMASI SEKOLAH ---
-  Widget _buildSchoolInfoCard() {
+class _SchoolInfoCard extends StatelessWidget {
+  const _SchoolInfoCard({required this.report});
+
+  final FoodReport report;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
@@ -118,7 +117,6 @@ class FoodReportDetailPage extends StatelessWidget {
             spacing: 8,
             runSpacing: 8,
             children: [
-              // Badge Tanggal
               Container(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 10,
@@ -137,41 +135,23 @@ class FoodReportDetailPage extends StatelessWidget {
                   ),
                 ),
               ),
-              // Badge Status Diterima
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 10,
-                  vertical: 4,
-                ),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFC8E6C9),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: const Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.check, size: 12, color: Color(0xFF2E7D32)),
-                    SizedBox(width: 4),
-                    Text(
-                      'Diterima',
-                      style: TextStyle(
-                        fontSize: 10.5,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF2E7D32),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              if (report.status case final status?)
+                _ReportStatusBadge(status: status),
             ],
           ),
         ],
       ),
     );
   }
+}
 
-  // --- WIDGET TIGA KARTU METRIK ---
-  Widget _buildMetricCards() {
+class _ReportMetrics extends StatelessWidget {
+  const _ReportMetrics({required this.report});
+
+  final FoodReport report;
+
+  @override
+  Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final scale = MediaQuery.textScalerOf(context).scale(14) / 14;
@@ -183,96 +163,61 @@ class FoodReportDetailPage extends StatelessWidget {
           spacing: 8,
           runSpacing: 8,
           children: [
-            // Total Porsi
             SizedBox(
               width: width,
-              child: _buildMetricCardContainer(
+              child: _MetricCard(
                 title: 'Total Porsi',
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 8),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.baseline,
-                    textBaseline: TextBaseline.alphabetic,
-                    children: [
-                      Text(
-                        '${report.portions}',
-                        style: const TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(width: 3),
-                      const Text('Porsi', style: TextStyle(fontSize: 10)),
-                    ],
+                  child: _MetricValue(
+                    value: '${report.portions}',
+                    unit: 'Porsi',
                   ),
                 ),
               ),
             ),
-
-            // Terdistribusi
             SizedBox(
               width: width,
-              child: _buildMetricCardContainer(
+              child: _MetricCard(
                 title: 'Terdistribusi',
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Column(
                     children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.baseline,
-                        textBaseline: TextBaseline.alphabetic,
-                        children: [
-                          Text(
-                            '${report.portions}',
-                            style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(width: 3),
-                          const Text('Porsi', style: TextStyle(fontSize: 10)),
-                        ],
+                      _MetricValue(
+                        value: report.distributedPortions?.toString() ?? '—',
+                        unit: 'Porsi',
                       ),
-                      const Text(
-                        '100% Selesai',
-                        style: TextStyle(fontSize: 9, color: Colors.grey),
+                      Text(
+                        report.distributionPercentage == null
+                            ? 'Belum tersedia'
+                            : '${report.distributionPercentage}% Selesai',
+                        style: const TextStyle(fontSize: 9, color: Colors.grey),
                       ),
                     ],
                   ),
                 ),
               ),
             ),
-
-            // Siswa Alergi
             SizedBox(
               width: width,
-              child: _buildMetricCardContainer(
+              child: _MetricCard(
                 title: 'Siswa Alergi',
                 child: Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Column(
                     children: [
-                      const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.baseline,
-                        textBaseline: TextBaseline.alphabetic,
-                        children: [
-                          Text(
-                            '4',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(width: 3),
-                          Text('Siswa', style: TextStyle(fontSize: 10)),
-                        ],
+                      _MetricValue(
+                        value: report.studentsWithAllergies?.toString() ?? '—',
+                        unit: 'Siswa',
                       ),
                       const SizedBox(height: 2),
-                      _buildAllergyDot(Colors.red, '5 Siswa Alergi Kacang'),
-                      _buildAllergyDot(Colors.amber, '4 Siswa Alergi Telur'),
+                      for (final (index, allergy) in report.allergies.indexed)
+                        _AllergyIndicator(
+                          color: index.isEven ? Colors.red : Colors.amber,
+                          label:
+                              '${allergy.students} Siswa Alergi ${allergy.name}',
+                        ),
                     ],
                   ),
                 ),
@@ -283,11 +228,16 @@ class FoodReportDetailPage extends StatelessWidget {
       },
     );
   }
+}
 
-  Widget _buildMetricCardContainer({
-    required String title,
-    required Widget child,
-  }) {
+class _MetricCard extends StatelessWidget {
+  const _MetricCard({required this.title, required this.child});
+
+  final String title;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -320,8 +270,16 @@ class FoodReportDetailPage extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildAllergyDot(Color color, String text) {
+class _AllergyIndicator extends StatelessWidget {
+  const _AllergyIndicator({required this.color, required this.label});
+
+  final Color color;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(top: 1.5),
       child: Row(
@@ -335,7 +293,7 @@ class FoodReportDetailPage extends StatelessWidget {
           const SizedBox(width: 3),
           Flexible(
             child: Text(
-              text,
+              label,
               style: const TextStyle(fontSize: 7.5, color: Colors.black54),
               overflow: TextOverflow.ellipsis,
             ),
@@ -344,38 +302,15 @@ class FoodReportDetailPage extends StatelessWidget {
       ),
     );
   }
+}
 
-  // --- WIDGET TABEL MENU MAKANAN ---
-  Widget _buildMenuTableCard() {
-    final List<Map<String, String>> menuItems = [
-      {
-        'name': 'Nasi Putih',
-        'category': 'Karbohidrat',
-        'qty': '${report.portions} Porsi',
-      },
-      {
-        'name': 'Telur Rebus',
-        'category': 'Protein Hewani',
-        'qty': '${report.portions} Porsi',
-      },
-      {
-        'name': 'Capcay',
-        'category': 'Sayuran',
-        'qty': '${report.portions} Porsi',
-      },
-      {'name': 'Jeruk', 'category': 'Buah', 'qty': '${report.portions} Porsi'},
-      {
-        'name': 'Susu Kemasan',
-        'category': '',
-        'qty': '${report.portions} Porsi',
-      },
-      {
-        'name': 'Menu Pengganti (Tanpa Telur)',
-        'category': 'Khusus Siswa Alergi',
-        'qty': '4 Porsi',
-      },
-    ];
+class _MenuTableCard extends StatelessWidget {
+  const _MenuTableCard({required this.report});
 
+  final FoodReport report;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -383,7 +318,6 @@ class FoodReportDetailPage extends StatelessWidget {
       ),
       child: Column(
         children: [
-          // Header Judul Menu Makanan
           const Padding(
             padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
             child: Row(
@@ -407,8 +341,6 @@ class FoodReportDetailPage extends StatelessWidget {
               ],
             ),
           ),
-
-          // Subheader Kolom
           Container(
             width: double.infinity,
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
@@ -422,9 +354,7 @@ class FoodReportDetailPage extends StatelessWidget {
               ),
             ),
           ),
-
-          // List Baris Menu Makanan
-          ...menuItems.map((item) {
+          ...report.menuItems.map((item) {
             return Column(
               children: [
                 Padding(
@@ -440,16 +370,16 @@ class FoodReportDetailPage extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              item['name']!,
+                              item.name,
                               style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
                               ),
                             ),
-                            if (item['category']!.isNotEmpty) ...[
+                            if (item.category.isNotEmpty) ...[
                               const SizedBox(height: 1),
                               Text(
-                                item['category']!,
+                                item.category,
                                 style: const TextStyle(
                                   fontSize: 10,
                                   color: Colors.grey,
@@ -462,7 +392,7 @@ class FoodReportDetailPage extends StatelessWidget {
                       const SizedBox(width: 12),
                       Flexible(
                         child: Text(
-                          item['qty']!,
+                          '${item.portions} Porsi',
                           style: const TextStyle(
                             fontSize: 12,
                             fontWeight: FontWeight.w600,
@@ -485,9 +415,13 @@ class FoodReportDetailPage extends StatelessWidget {
       ),
     );
   }
+}
 
-  // --- WIDGET FOTO DOKUMENTASI ---
-  Widget _buildDocumentationCard() {
+class _DocumentationCard extends StatelessWidget {
+  const _DocumentationCard();
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -514,6 +448,80 @@ class FoodReportDetailPage extends StatelessWidget {
             ),
             child: const Center(
               child: Icon(Icons.image_outlined, size: 48, color: Colors.grey),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _MetricValue extends StatelessWidget {
+  const _MetricValue({required this.value, required this.unit});
+
+  final String value;
+  final String unit;
+
+  @override
+  Widget build(BuildContext context) => Row(
+    mainAxisAlignment: MainAxisAlignment.center,
+    crossAxisAlignment: CrossAxisAlignment.baseline,
+    textBaseline: TextBaseline.alphabetic,
+    children: [
+      Text(
+        value,
+        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      ),
+      const SizedBox(width: 3),
+      Text(unit, style: const TextStyle(fontSize: 10)),
+    ],
+  );
+}
+
+class _ReportStatusBadge extends StatelessWidget {
+  const _ReportStatusBadge({required this.status});
+
+  final FoodReportStatus status;
+
+  @override
+  Widget build(BuildContext context) {
+    final (label, icon, foreground, background) = switch (status) {
+      FoodReportStatus.received => (
+        'Diterima',
+        Icons.check,
+        const Color(0xFF2E7D32),
+        const Color(0xFFC8E6C9),
+      ),
+      FoodReportStatus.pending => (
+        'Menunggu',
+        Icons.schedule,
+        const Color(0xFF8D6E00),
+        const Color(0xFFFFF3CD),
+      ),
+      FoodReportStatus.rejected => (
+        'Ditolak',
+        Icons.close,
+        const Color(0xFFC62828),
+        const Color(0xFFFFCDD2),
+      ),
+    };
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: background,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 12, color: foreground),
+          const SizedBox(width: 4),
+          Text(
+            label,
+            style: TextStyle(
+              fontSize: 10.5,
+              fontWeight: FontWeight.bold,
+              color: foreground,
             ),
           ),
         ],

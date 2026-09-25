@@ -4,11 +4,48 @@ class FoodReport {
     required this.school,
     required this.address,
     required this.portions,
+    this.status,
+    this.distributedPortions,
+    this.studentsWithAllergies,
+    this.allergies = const [],
+    this.menuItems = const [],
   });
 
   final DateTime date;
   final String school;
   final String address;
+  final int portions;
+  final FoodReportStatus? status;
+  final int? distributedPortions;
+  final int? studentsWithAllergies;
+  final List<FoodReportAllergy> allergies;
+  final List<FoodReportMenuItem> menuItems;
+
+  int? get distributionPercentage {
+    final distributed = distributedPortions;
+    if (distributed == null || portions <= 0) return null;
+    return (distributed / portions * 100).round();
+  }
+}
+
+enum FoodReportStatus { pending, received, rejected }
+
+class FoodReportAllergy {
+  const FoodReportAllergy({required this.name, required this.students});
+
+  final String name;
+  final int students;
+}
+
+class FoodReportMenuItem {
+  const FoodReportMenuItem({
+    required this.name,
+    required this.portions,
+    this.category = '',
+  });
+
+  final String name;
+  final String category;
   final int portions;
 }
 
