@@ -56,13 +56,14 @@ void main() {
     await tester.ensureVisible(find.text('Detail').first);
     await tester.tap(find.text('Detail').first);
     await tester.pumpAndSettle();
-    expect(find.text('Detail Riwayat Laporan "Sekolah Baru"'), findsOneWidget);
-    expect(find.text('Jumlah porsi: 20'), findsOneWidget);
+    expect(find.text('Detail Riwayat Laporan Sekolah Baru'), findsOneWidget);
+    expect(find.text('Total Porsi'), findsOneWidget);
+    expect(find.text('20'), findsNWidgets(2));
     expect(find.byType(BottomSheet), findsNothing);
     expect(find.text('23 Maret 2026'), findsOneWidget);
     await tester.tap(find.byTooltip('Kembali'));
     await tester.pumpAndSettle();
-    expect(find.text('Detail Riwayat Laporan "Sekolah Baru"'), findsNothing);
+    expect(find.text('Detail Riwayat Laporan Sekolah Baru'), findsNothing);
   });
 
   testWidgets('empty real history does not display sample reports', (
@@ -128,12 +129,12 @@ void main() {
         await tester.tap(find.text('Detail').first);
         await tester.pumpAndSettle();
         expect(
-          find.text('Detail Riwayat Laporan "Sekolah Baru"'),
+          find.text('Detail Riwayat Laporan Sekolah Baru'),
           findsOneWidget,
         );
-        await tester.ensureVisible(find.text('Jumlah porsi: 20'));
+        await tester.ensureVisible(find.text('Foto Dokumentasi'));
         await tester.pumpAndSettle();
-        expect(find.text('Jumlah porsi: 20').hitTestable(), findsOneWidget);
+        expect(find.text('Foto Dokumentasi').hitTestable(), findsOneWidget);
         expect(tester.takeException(), isNull);
         await tester.tap(find.byTooltip('Kembali'));
         await tester.pumpAndSettle();

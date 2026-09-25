@@ -7,10 +7,12 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/login_page.dart';
 import '../../features/auth/presentation/register_page.dart';
 import '../../features/auth/presentation/session_cubit.dart';
+import '../../features/food_report/domain/food_report.dart';
 import '../../features/food_report/presentation/food_report_history_page.dart';
 import '../../features/partnership/presentation/partnership_status_page.dart';
 import '../../features/partnership/presentation/sppg_registration_page.dart';
 import '../../features/splash/presentation/splash_screen.dart';
+import '../../features/food_report/presentation/food_report_detail_page.dart';
 
 class SessionRefresh extends ChangeNotifier {
   SessionRefresh(SessionCubit session) {
@@ -58,6 +60,13 @@ GoRouter createRouter(SessionCubit session, SessionRefresh refresh) => GoRouter(
     GoRoute(
       path: '/food-reports/history',
       builder: (context, state) => const FoodReportHistoryPage(),
+    ),
+    GoRoute(
+      path: '/food-reports/detail',
+      redirect: (context, state) =>
+          state.extra is FoodReport ? null : '/food-reports/history',
+      builder: (context, state) =>
+          FoodReportDetailPage(report: state.extra! as FoodReport),
     ),
     GoRoute(path: '/splash', builder: (context, state) => const SplashScreen()),
     GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
