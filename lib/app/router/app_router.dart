@@ -19,6 +19,7 @@ import '../../features/partnership/presentation/sppg_registration_page.dart';
 import '../../features/splash/presentation/splash_screen.dart';
 import '../../features/schools/presentation/school_list_page.dart';
 import '../../features/food_report/presentation/food_report_detail_page.dart';
+import '../../features/home/presentation/home_page.dart';
 
 class SessionRefresh extends ChangeNotifier {
   SessionRefresh(SessionCubit session) {
@@ -120,40 +121,7 @@ GoRouter createRouter(SessionCubit session, SessionRefresh refresh) => GoRouter(
       routes: [
         GoRoute(
           path: '/',
-          builder: (context, state) => Center(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text('Beranda Mitra/SPPG'),
-                TextButton(
-                  onPressed: () => context.push('/food-reports/scan'),
-                  child: const Text('Scan & Pelaporan Menu Makanan'),
-                ),
-                const SizedBox(height: 16),
-                TextButton(
-                  onPressed: () => context.push('/students/allergies'),
-                  child: const Text('Monitoring Alergi Siswa'),
-                ),
-                const SizedBox(height: 16),
-                TextButton(
-                  onPressed: () => context.push('/food-reports/issues'),
-                  child: const Text('Laporan Makanan Bermasalah'),
-                ),
-                TextButton(
-                  onPressed: () => context.push('/schools'),
-                  child: const Text('Daftar Sekolah'),
-                ),
-                TextButton(
-                  onPressed: () => context.push('/partnership/status'),
-                  child: const Text('Status Kemitraan'),
-                ),
-                TextButton(
-                  onPressed: () => context.push('/food-reports/history'),
-                  child: const Text('Riwayat Laporan Makanan'),
-                ),
-              ],
-            ),
-          ),
+          builder: (context, state) => const HomePage(),
         ),
       ],
     ),
