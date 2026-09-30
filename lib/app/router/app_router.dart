@@ -1,3 +1,5 @@
+import '../../features/allergy_monitoring/presentation/student_allergy_monitoring_page.dart';
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -61,6 +63,10 @@ GoRouter createRouter(SessionCubit session, SessionRefresh refresh) => GoRouter(
   },
   routes: [
     GoRoute(
+      path: '/students/allergies',
+      builder: (context, state) => const StudentAllergyMonitoringPage(),
+    ),
+    GoRoute(
       path: '/food-reports/issues',
       builder: (context, state) => const ProblematicFoodReportsPage(),
     ),
@@ -114,6 +120,10 @@ GoRouter createRouter(SessionCubit session, SessionRefresh refresh) => GoRouter(
               mainAxisSize: MainAxisSize.min,
               children: [
                 const Text('Beranda Mitra/SPPG'),
+                TextButton(
+                  onPressed: () => context.push('/students/allergies'),
+                  child: const Text('Monitoring Alergi Siswa'),
+                ),
                 const SizedBox(height: 16),
                 TextButton(
                   onPressed: () => context.push('/food-reports/issues'),
