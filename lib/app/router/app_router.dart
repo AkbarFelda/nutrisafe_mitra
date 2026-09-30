@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/food_issues/presentation/problematic_food_reports_page.dart';
+
 import '../../features/auth/presentation/login_page.dart';
 import '../../features/auth/presentation/register_page.dart';
 import '../../features/auth/presentation/session_cubit.dart';
@@ -59,6 +61,10 @@ GoRouter createRouter(SessionCubit session, SessionRefresh refresh) => GoRouter(
   },
   routes: [
     GoRoute(
+      path: '/food-reports/issues',
+      builder: (context, state) => const ProblematicFoodReportsPage(),
+    ),
+    GoRoute(
       path: '/schools',
       builder: (context, state) => const SchoolListPage(),
     ),
@@ -109,6 +115,10 @@ GoRouter createRouter(SessionCubit session, SessionRefresh refresh) => GoRouter(
               children: [
                 const Text('Beranda Mitra/SPPG'),
                 const SizedBox(height: 16),
+                TextButton(
+                  onPressed: () => context.push('/food-reports/issues'),
+                  child: const Text('Laporan Makanan Bermasalah'),
+                ),
                 TextButton(
                   onPressed: () => context.push('/schools'),
                   child: const Text('Daftar Sekolah'),
