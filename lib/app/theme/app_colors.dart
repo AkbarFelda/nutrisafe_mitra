@@ -12,4 +12,6 @@ abstract final class AppColors {
   static const emailIcon = Colors.blue;
   static const passwordIcon = Colors.amber;
   static const shadow = Color(0x0F000000);
+  static const dashboardBackground = Color(0xFFC9ECFF);
+  static const dashboardTile = Color(0xFF287FD1);
 }
