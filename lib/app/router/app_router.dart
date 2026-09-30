@@ -13,6 +13,7 @@ import '../../features/auth/presentation/register_page.dart';
 import '../../features/auth/presentation/session_cubit.dart';
 import '../../features/food_report/domain/food_report.dart';
 import '../../features/food_report/presentation/food_report_history_page.dart';
+import '../../features/food_scan/presentation/food_scan_report_page.dart';
 import '../../features/partnership/presentation/partnership_status_page.dart';
 import '../../features/partnership/presentation/sppg_registration_page.dart';
 import '../../features/splash/presentation/splash_screen.dart';
@@ -75,6 +76,10 @@ GoRouter createRouter(SessionCubit session, SessionRefresh refresh) => GoRouter(
       builder: (context, state) => const SchoolListPage(),
     ),
     GoRoute(
+      path: '/food-reports/scan',
+      builder: (context, state) => const FoodScanReportPage(),
+    ),
+    GoRoute(
       path: '/food-reports/history',
       builder: (context, state) => const FoodReportHistoryPage(),
     ),
@@ -120,6 +125,11 @@ GoRouter createRouter(SessionCubit session, SessionRefresh refresh) => GoRouter(
               mainAxisSize: MainAxisSize.min,
               children: [
                 const Text('Beranda Mitra/SPPG'),
+                TextButton(
+                  onPressed: () => context.push('/food-reports/scan'),
+                  child: const Text('Scan & Pelaporan Menu Makanan'),
+                ),
+                const SizedBox(height: 16),
                 TextButton(
                   onPressed: () => context.push('/students/allergies'),
                   child: const Text('Monitoring Alergi Siswa'),
