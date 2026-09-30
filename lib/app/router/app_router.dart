@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/food_issues/presentation/problematic_food_reports_page.dart';
+
 import '../../features/auth/presentation/login_page.dart';
 import '../../features/auth/presentation/register_page.dart';
 import '../../features/auth/presentation/session_cubit.dart';
@@ -12,6 +14,7 @@ import '../../features/food_report/presentation/food_report_history_page.dart';
 import '../../features/partnership/presentation/partnership_status_page.dart';
 import '../../features/partnership/presentation/sppg_registration_page.dart';
 import '../../features/splash/presentation/splash_screen.dart';
+import '../../features/schools/presentation/school_list_page.dart';
 import '../../features/food_report/presentation/food_report_detail_page.dart';
 
 class SessionRefresh extends ChangeNotifier {
@@ -57,6 +60,14 @@ GoRouter createRouter(SessionCubit session, SessionRefresh refresh) => GoRouter(
     return path == '/splash' || isAuthPage ? '/' : null;
   },
   routes: [
+    GoRoute(
+      path: '/food-reports/issues',
+      builder: (context, state) => const ProblematicFoodReportsPage(),
+    ),
+    GoRoute(
+      path: '/schools',
+      builder: (context, state) => const SchoolListPage(),
+    ),
     GoRoute(
       path: '/food-reports/history',
       builder: (context, state) => const FoodReportHistoryPage(),
@@ -104,6 +115,14 @@ GoRouter createRouter(SessionCubit session, SessionRefresh refresh) => GoRouter(
               children: [
                 const Text('Beranda Mitra/SPPG'),
                 const SizedBox(height: 16),
+                TextButton(
+                  onPressed: () => context.push('/food-reports/issues'),
+                  child: const Text('Laporan Makanan Bermasalah'),
+                ),
+                TextButton(
+                  onPressed: () => context.push('/schools'),
+                  child: const Text('Daftar Sekolah'),
+                ),
                 TextButton(
                   onPressed: () => context.push('/partnership/status'),
                   child: const Text('Status Kemitraan'),
