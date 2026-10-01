@@ -1,9 +1,14 @@
+import 'package:nutrisafe_mitra/core/constants/app_assets.dart';
+
 import '../../../core/widgets/responsive_content.dart';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nutrisafe_mitra/app/theme/app_colors.dart';
 
+import 'session_cubit.dart';
 import 'widgets/auth_header.dart';
 import 'widgets/auth_form_card.dart';
 import 'widgets/auth_field_label.dart';
@@ -27,6 +32,17 @@ class _LoginPageState extends State<LoginPage> {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(SnackBar(content: Text('Halaman $page belum tersedia.')));
+  }
+
+  Future<void> _login() async {
+    if (!kDebugMode) {
+      _showUnavailablePage('login');
+      return;
+    }
+
+    await context.read<SessionCubit>().acceptAuthenticatedToken(
+      'nutrisafe-local-debug-session',
+    );
   }
 
   @override
@@ -65,7 +81,7 @@ class _LoginPageState extends State<LoginPage> {
                     children: [
                       const AuthFieldLabel(
                         text: 'Email',
-                        icon: Icons.mail_outline,
+                        icon: AppAssets.emailIcon,
                         color: AppColors.emailIcon,
                         spacing: 8,
                       ),
@@ -81,7 +97,7 @@ class _LoginPageState extends State<LoginPage> {
 
                       const AuthFieldLabel(
                         text: 'Password',
-                        icon: Icons.lock_outline,
+                        icon: AppAssets.passwordIcon,
                         color: AppColors.passwordIcon,
                         spacing: 8,
                       ),
@@ -101,7 +117,23 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                       const SizedBox(height: 24),
 
-                      AuthPrimaryButton(label: 'Masuk', onPressed: () {}),
+                      AuthPrimaryButton(
+                        label: kDebugMode ? 'Masuk Mode Demo' : 'Masuk',
+                        onPressed: _login,
+                      ),
+                      if (kDebugMode) ...[
+                        const SizedBox(height: 8),
+                        const Center(
+                          child: Text(
+                            'Mode debug: email dan password boleh dikosongkan.',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
+                        ),
+                      ],
                       const SizedBox(height: 16),
 
                       AuthAccountPrompt(

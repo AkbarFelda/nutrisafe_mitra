@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../app/theme/app_colors.dart';
+import '../../../core/constants/app_assets.dart';
+import '../../../core/widgets/app_icon.dart';
 import '../../auth/presentation/session_cubit.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -25,19 +27,19 @@ class ProfilePage extends StatelessWidget {
         const _ProfileHeader(),
         const SizedBox(height: 28),
         const _ProfileMenuTile(
-          icon: Icons.business_outlined,
+          icon: AppIcon(AppAssets.buildingIcon, size: 24),
           title: 'Data Mitra / SPPG',
           subtitle: 'Kelola informasi lembaga dan penanggung jawab',
         ),
         const SizedBox(height: 12),
         const _ProfileMenuTile(
-          icon: Icons.lock_outline_rounded,
+          icon: AppIcon(AppAssets.passwordIcon, size: 24),
           title: 'Keamanan Akun',
           subtitle: 'Atur kata sandi dan keamanan akun',
         ),
         const SizedBox(height: 12),
         const _ProfileMenuTile(
-          icon: Icons.help_outline_rounded,
+          icon: Icon(Icons.help_outline_rounded),
           title: 'Pusat Bantuan',
           subtitle: 'Temukan jawaban atau hubungi tim NutriSafe',
         ),
@@ -82,7 +84,10 @@ class _ProfileHeader extends StatelessWidget {
             ),
           ],
         ),
-        child: const Icon(Icons.person_rounded, color: Colors.white, size: 58),
+        child: const Padding(
+          padding: EdgeInsets.all(18),
+          child: AppIcon(AppAssets.userIcon, size: 52, color: Colors.white),
+        ),
       ),
       const SizedBox(height: 14),
       Text(
@@ -108,7 +113,7 @@ class _ProfileMenuTile extends StatelessWidget {
     required this.subtitle,
   });
 
-  final IconData icon;
+  final Widget icon;
   final String title;
   final String subtitle;
 
@@ -130,7 +135,10 @@ class _ProfileMenuTile extends StatelessWidget {
                 color: AppColors.loginBackground,
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(icon, color: AppColors.primary),
+              child: IconTheme(
+                data: const IconThemeData(color: AppColors.primary),
+                child: Center(child: icon),
+              ),
             ),
             const SizedBox(width: 12),
             Expanded(

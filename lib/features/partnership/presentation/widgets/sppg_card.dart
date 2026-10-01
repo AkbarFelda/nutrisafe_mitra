@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_assets.dart';
+import '../../../../core/widgets/app_icon.dart';
+
 class SppgCard extends StatelessWidget {
   const SppgCard({super.key, required this.onDetail});
   final VoidCallback onDetail;
@@ -22,14 +25,9 @@ class SppgCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
           const Padding(
             padding: EdgeInsets.only(top: 2),
-            child: Icon(
-              Icons.domain_verification,
-              color: Color(0xFF007AFF),
-              size: 28,
-            ),
+            child: AppIcon(AppAssets.buildingIcon, size: 28),
           ),
 
           const SizedBox(width: 12),

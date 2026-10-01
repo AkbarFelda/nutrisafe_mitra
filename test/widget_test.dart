@@ -12,6 +12,7 @@ import 'support/memory_token_store.dart';
 import 'package:nutrisafe_mitra/features/food_report/domain/food_report.dart';
 import 'package:nutrisafe_mitra/features/food_report/presentation/food_report_detail_page.dart';
 import 'package:nutrisafe_mitra/features/food_report/presentation/food_report_history_page.dart';
+import 'package:nutrisafe_mitra/features/home/presentation/home_page.dart';
 
 void main() {
   testWidgets('detail route requires and displays the selected report', (
@@ -23,7 +24,7 @@ void main() {
     await tester.pumpWidget(MitraApp(session: di<SessionCubit>()));
     await tester.pump(const Duration(seconds: 3));
     await tester.pumpAndSettle();
-    final router = GoRouter.of(tester.element(find.text('Beranda Mitra/SPPG')));
+    final router = GoRouter.of(tester.element(find.byType(HomePage)));
     for (final extra in [null, 'invalid']) {
       router.go('/food-reports/detail', extra: extra);
       await tester.pumpAndSettle();
@@ -71,7 +72,7 @@ void main() {
     final context = tester.element(find.text('Masuk Akun'));
     GoRouter.of(context).go('/');
     await tester.pumpAndSettle();
-    expect(find.text('Beranda Mitra/SPPG'), findsNothing);
+    expect(find.byType(HomePage), findsNothing);
     GoRouter.of(context).go('/partnership/status');
     await tester.pumpAndSettle();
     expect(find.byType(PartnershipStatusPage), findsNothing);
@@ -91,8 +92,8 @@ void main() {
     await tester.pumpWidget(MitraApp(session: di<SessionCubit>()));
     await tester.pump(const Duration(milliseconds: 1500));
     await tester.pumpAndSettle();
-    expect(find.text('Beranda Mitra/SPPG'), findsOneWidget);
-    await tester.tap(find.text('Status Kemitraan'));
+    expect(find.byType(HomePage), findsOneWidget);
+    await tester.tap(find.byKey(const Key('home-menu-/partnership/status')));
     await tester.pumpAndSettle();
     expect(find.byType(PartnershipStatusPage), findsOneWidget);
     expect(find.byType(AppBar), findsOneWidget);
@@ -104,14 +105,14 @@ void main() {
     expect(find.byType(PartnershipStatusPage), findsOneWidget);
     await tester.tap(find.byTooltip('Kembali'));
     await tester.pumpAndSettle();
-    expect(find.text('Beranda Mitra/SPPG'), findsOneWidget);
-    final router = GoRouter.of(tester.element(find.text('Beranda Mitra/SPPG')));
+    expect(find.byType(HomePage), findsOneWidget);
+    final router = GoRouter.of(tester.element(find.byType(HomePage)));
     router.go('/unknown-test-route');
     await tester.pumpAndSettle();
     expect(find.text('Halaman tidak ditemukan.'), findsOneWidget);
     await tester.tap(find.text('Kembali'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Keluar'));
+    await di<SessionCubit>().logout();
     await tester.pumpAndSettle();
     expect(find.text('Masuk Akun'), findsOneWidget);
     await tester.pumpWidget(const SizedBox());

@@ -1,27 +1,29 @@
 import 'package:flutter/material.dart';
 
 import '../../../app/theme/app_colors.dart';
+import '../../../core/constants/app_assets.dart';
+import '../../../core/widgets/app_icon.dart';
 
 class NotificationPage extends StatelessWidget {
   const NotificationPage({super.key});
 
   static const _items = [
     _NotificationItem(
-      icon: Icons.assignment_turned_in_outlined,
+      icon: AppAssets.recentreportIcon,
       title: 'Laporan berhasil dikirim',
       message: 'Laporan menu makanan hari ini telah tersimpan.',
       time: '10 menit lalu',
       unread: true,
     ),
     _NotificationItem(
-      icon: Icons.handshake_outlined,
+      icon: AppAssets.handshakeIcon,
       title: 'Status kemitraan diperbarui',
       message: 'Dokumen pendaftaran SPPG sedang dalam proses verifikasi.',
       time: 'Kemarin',
       unread: true,
     ),
     _NotificationItem(
-      icon: Icons.warning_amber_rounded,
+      icon: AppAssets.personwarningIcon,
       title: 'Tindak lanjut diperlukan',
       message: 'Ada laporan makanan bermasalah yang perlu ditinjau.',
       time: '2 hari lalu',
@@ -82,7 +84,7 @@ class _NotificationCard extends StatelessWidget {
               color: AppColors.loginBackground,
               borderRadius: BorderRadius.circular(12),
             ),
-            child: Icon(item.icon, color: AppColors.primary),
+            child: Center(child: AppIcon(item.icon, size: 26)),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -137,7 +139,7 @@ class _NotificationItem {
     required this.unread,
   });
 
-  final IconData icon;
+  final String icon;
   final String title;
   final String message;
   final String time;

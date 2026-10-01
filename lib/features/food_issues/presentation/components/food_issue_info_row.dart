@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/theme/app_colors.dart';
+import '../../../../core/widgets/app_icon.dart';
 
 class FoodIssueInfoRow extends StatelessWidget {
   const FoodIssueInfoRow(this.icon, this.label, this.value, {super.key});
-  final IconData icon;
+  final String icon;
   final String label;
   final String value;
   @override
   Widget build(BuildContext context) => Row(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Icon(icon, size: 22, color: AppColors.primary),
+      AppIcon(icon, size: 22),
       const SizedBox(width: 12),
       Expanded(
         child: Column(

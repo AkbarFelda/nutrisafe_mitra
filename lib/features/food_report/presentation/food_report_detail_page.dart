@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../app/theme/app_colors.dart';
+import '../../../core/constants/app_assets.dart';
+import '../../../core/widgets/app_icon.dart';
 import '../../../core/widgets/responsive_content.dart';
 import '../domain/food_report.dart';
 
@@ -84,7 +86,7 @@ class _SchoolInfoCard extends StatelessWidget {
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(Icons.school, color: Color(0xFFFF9800), size: 28),
+              const AppIcon(AppAssets.schoolIcon, size: 28),
               const SizedBox(width: 10),
               Expanded(
                 child: Column(

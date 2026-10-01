@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/theme/app_colors.dart';
+import '../../../../core/widgets/app_icon.dart';
 
 class AuthFieldLabel extends StatelessWidget {
   const AuthFieldLabel({
@@ -11,7 +12,7 @@ class AuthFieldLabel extends StatelessWidget {
     this.spacing = 6,
   });
   final String text;
-  final IconData icon;
+  final String icon;
   final Color color;
   final double spacing;
   @override
@@ -19,7 +20,7 @@ class AuthFieldLabel extends StatelessWidget {
     padding: EdgeInsets.only(bottom: spacing),
     child: Row(
       children: [
-        Icon(icon, size: 16, color: color),
+        AppIcon(icon, size: 16, color: color),
         const SizedBox(width: 6),
         Flexible(
           child: Text(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_assets.dart';
+import '../../../../core/widgets/app_icon.dart';
 import '../../domain/allergy_monitoring.dart';
 
 class AllergySummary extends StatelessWidget {
@@ -22,7 +24,7 @@ class AllergySummary extends StatelessWidget {
               title: 'Jenis Alergi',
               value: data.types.length,
               unit: 'jenis alergi',
-              icon: Icons.category_rounded,
+              icon: AppAssets.allergymonitoringIcon,
               color: const Color(0xFFFF777B),
             ),
           ),
@@ -32,7 +34,7 @@ class AllergySummary extends StatelessWidget {
               title: 'Total Siswa Alergi',
               value: data.allergicStudents,
               unit: 'siswa',
-              icon: Icons.school_rounded,
+              icon: AppAssets.manstudentIcon,
               color: const Color(0xFFFFB58F),
             ),
           ),
@@ -52,7 +54,7 @@ class _Metric extends StatelessWidget {
   });
   final String title, unit;
   final int value;
-  final IconData icon;
+  final String icon;
   final Color color;
   @override
   Widget build(BuildContext context) => Container(
@@ -63,7 +65,7 @@ class _Metric extends StatelessWidget {
     ),
     child: Row(
       children: [
-        Icon(icon, size: 28, color: const Color(0xFF34285A)),
+        AppIcon(icon, size: 28),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
