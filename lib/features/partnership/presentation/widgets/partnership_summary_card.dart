@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../../../app/theme/app_colors.dart';
+import '../../../../core/constants/app_assets.dart';
+import '../../../../core/widgets/app_icon.dart';
 
 class PartnershipSummaryCard extends StatelessWidget {
   const PartnershipSummaryCard({super.key});
@@ -99,7 +101,7 @@ class _SummaryCounts extends StatelessWidget {
               child: const _CountBadge(
                 label: 'Daftar SPPG',
                 count: '1',
-                icon: Icons.apartment,
+                icon: AppAssets.buildingIcon,
                 color: Color(0xFFFF7A22),
               ),
             ),
@@ -108,7 +110,7 @@ class _SummaryCounts extends StatelessWidget {
               child: const _CountBadge(
                 label: 'Daftar Sekolah',
                 count: '2',
-                icon: Icons.school_outlined,
+                icon: AppAssets.schoolIcon,
                 color: AppColors.primary,
               ),
             ),
@@ -129,7 +131,7 @@ class _CountBadge extends StatelessWidget {
 
   final String label;
   final String count;
-  final IconData icon;
+  final String icon;
   final Color color;
 
   @override
@@ -142,7 +144,7 @@ class _CountBadge extends StatelessWidget {
       ),
       child: Row(
         children: [
-          Icon(icon, color: Colors.white, size: 28),
+          AppIcon(icon, size: 28),
           const SizedBox(width: 8),
           Expanded(
             child: Column(

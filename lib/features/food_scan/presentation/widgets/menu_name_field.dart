@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_assets.dart';
+import '../../../../core/widgets/app_icon.dart';
+
 class MenuNameField extends StatelessWidget {
   const MenuNameField({super.key, required this.controller});
 
@@ -13,7 +16,10 @@ class MenuNameField extends StatelessWidget {
     decoration: const InputDecoration(
       labelText: 'Nama menu',
       hintText: 'Contoh: Nasi ayam kecap',
-      prefixIcon: Icon(Icons.restaurant_menu_rounded),
+      prefixIcon: Padding(
+        padding: EdgeInsets.all(12),
+        child: AppIcon(AppAssets.scannermealIcon, size: 20),
+      ),
       filled: true,
       fillColor: Colors.white,
     ),

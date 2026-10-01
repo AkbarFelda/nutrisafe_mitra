@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app/theme/app_colors.dart';
 import '../../../core/constants/app_assets.dart';
+import '../../../core/widgets/app_icon.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -10,12 +11,12 @@ class HomePage extends StatelessWidget {
   static const _partnerMenus = [
     _HomeMenu(
       label: 'Status Kemitraan\n& Daftar SPPG',
-      icon: Icons.handshake_outlined,
+      icon: AppAssets.handshakeIcon,
       route: '/partnership/status',
     ),
     _HomeMenu(
       label: 'Riwayat Laporan',
-      icon: Icons.assignment_outlined,
+      icon: AppAssets.recentreportIcon,
       route: '/food-reports/history',
     ),
   ];
@@ -23,22 +24,22 @@ class HomePage extends StatelessWidget {
   static const _managerMenus = [
     _HomeMenu(
       label: 'Monitoring Alergi\nSiswa',
-      icon: Icons.monitor_heart_outlined,
+      icon: AppAssets.allergymonitoringIcon,
       route: '/students/allergies',
     ),
     _HomeMenu(
       label: 'Scan & Pelaporan\nMenu Makanan',
-      icon: Icons.document_scanner_outlined,
+      icon: AppAssets.scannermealIcon,
       route: '/food-reports/scan',
     ),
     _HomeMenu(
       label: 'Daftar Sekolah',
-      icon: Icons.school_outlined,
+      icon: AppAssets.schoolIcon,
       route: '/schools',
     ),
     _HomeMenu(
       label: 'Laporan Makanan\nBermasalah',
-      icon: Icons.assignment_late_outlined,
+      icon: AppAssets.problemreportIcon,
       route: '/food-reports/issues',
     ),
   ];
@@ -116,9 +117,8 @@ class _SectionTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Text(
     label,
-    style: Theme.of(
-      context,
-    ).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+    style: Theme.of(context).textTheme.titleMedium
+        ?.copyWith(fontWeight: FontWeight.w700),
   );
 }
 
@@ -158,7 +158,7 @@ class _MenuCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(menu.icon, color: Colors.white, size: 42),
+            AppIcon(menu.icon, size: 42),
             const SizedBox(height: 10),
             Text(
               menu.label,
@@ -184,6 +184,6 @@ class _HomeMenu {
   });
 
   final String label;
-  final IconData icon;
+  final String icon;
   final String route;
 }

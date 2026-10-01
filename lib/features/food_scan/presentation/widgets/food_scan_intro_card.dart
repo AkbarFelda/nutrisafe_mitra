@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_assets.dart';
+import '../../../../core/widgets/app_icon.dart';
+
 class FoodScanIntroCard extends StatelessWidget {
   const FoodScanIntroCard({super.key});
 
@@ -48,7 +51,7 @@ class FoodScanIntroCard extends StatelessWidget {
           ),
         ),
         SizedBox(width: 14),
-        Icon(Icons.auto_awesome, color: Colors.white, size: 38),
+        AppIcon(AppAssets.scannermealIcon, size: 38),
       ],
     ),
   );

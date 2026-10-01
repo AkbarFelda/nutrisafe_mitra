@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/theme/app_colors.dart';
+import '../../../core/constants/app_assets.dart';
+import '../../../core/widgets/app_icon.dart';
 import '../../../core/widgets/responsive_content.dart';
 import '../data/sample_food_reports.dart';
 import '../domain/food_report.dart';
@@ -138,11 +140,7 @@ class _FoodReportHistoryPageState extends State<FoodReportHistoryPage> {
                         padding: const EdgeInsets.all(24),
                         child: Column(
                           children: [
-                            const Icon(
-                              Icons.receipt_long_outlined,
-                              size: 56,
-                              color: AppColors.primary,
-                            ),
+                            const AppIcon(AppAssets.recentreportIcon, size: 56),
                             const SizedBox(height: 16),
                             Text(
                               _reports.isEmpty

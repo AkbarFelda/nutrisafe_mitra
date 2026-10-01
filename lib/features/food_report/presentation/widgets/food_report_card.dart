@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../../../../app/theme/app_colors.dart';
+import '../../../../core/constants/app_assets.dart';
+import '../../../../core/widgets/app_icon.dart';
 import '../../domain/food_report.dart';
 import '../food_report_detail_page.dart';
 
@@ -29,7 +30,7 @@ class FoodReportCard extends StatelessWidget {
       children: [
         const Padding(
           padding: EdgeInsets.only(top: 2),
-          child: Icon(Icons.school, size: 26, color: AppColors.primary),
+          child: AppIcon(AppAssets.schoolIcon, size: 26),
         ),
         const SizedBox(width: 8),
         Expanded(

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_assets.dart';
+import '../../../../core/widgets/app_icon.dart';
 import '../../domain/allergy_monitoring.dart';
 
 class SchoolAllergyCard extends StatelessWidget {
@@ -17,11 +19,7 @@ class SchoolAllergyCard extends StatelessWidget {
       children: [
         Row(
           children: [
-            const Icon(
-              Icons.school_rounded,
-              size: 34,
-              color: Color(0xFFE59125),
-            ),
+            const AppIcon(AppAssets.schoolIcon, size: 34),
             const SizedBox(width: 12),
             Expanded(
               child: Column(

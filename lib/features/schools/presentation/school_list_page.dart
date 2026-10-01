@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/constants/app_assets.dart';
+import '../../../core/widgets/app_icon.dart';
 import '../../../core/widgets/responsive_content.dart';
 import '../data/sample_schools.dart';
 import '../domain/school.dart';
@@ -250,11 +252,11 @@ class _SchoolCard extends StatelessWidget {
                     runSpacing: 4,
                     children: [
                       _SchoolCount(
-                        icon: Icons.person,
+                        icon: AppAssets.manstudentIcon,
                         label: '${school.students} Siswa',
                       ),
                       _SchoolCount(
-                        icon: Icons.school,
+                        icon: AppAssets.schoolIcon,
                         label: '${school.teachers} Guru',
                       ),
                     ],
@@ -298,14 +300,14 @@ class _SchoolCard extends StatelessWidget {
 class _SchoolCount extends StatelessWidget {
   const _SchoolCount({required this.icon, required this.label});
 
-  final IconData icon;
+  final String icon;
   final String label;
 
   @override
   Widget build(BuildContext context) => Row(
     mainAxisSize: MainAxisSize.min,
     children: [
-      Icon(icon, size: 12, color: const Color(0xFF345D64)),
+      AppIcon(icon, size: 12),
       const SizedBox(width: 3),
       Flexible(
         child: Text(

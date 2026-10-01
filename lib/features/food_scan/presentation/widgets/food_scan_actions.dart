@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_assets.dart';
+import '../../../../core/widgets/app_icon.dart';
+
 class AnalyzeFoodButton extends StatelessWidget {
   const AnalyzeFoodButton({
     super.key,
@@ -27,7 +30,7 @@ class AnalyzeFoodButton extends StatelessWidget {
               color: Colors.white,
             ),
           )
-        : const Icon(Icons.auto_awesome_rounded),
+        : const AppIcon(AppAssets.scannermealIcon, size: 22),
     label: Text(isLoading ? 'Menganalisis...' : 'Mulai Analisis'),
   );
 }
@@ -55,7 +58,7 @@ class SubmitFoodReportButton extends StatelessWidget {
             dimension: 20,
             child: CircularProgressIndicator(strokeWidth: 2),
           )
-        : const Icon(Icons.send_outlined),
+        : const AppIcon(AppAssets.recentreportIcon, size: 22),
     label: Text(isLoading ? 'Mengirim...' : 'Kirim Laporan Menu'),
   );
 }

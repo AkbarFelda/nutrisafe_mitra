@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../app/theme/app_colors.dart';
 import '../../../core/constants/app_assets.dart';
+import '../../../core/widgets/app_icon.dart';
 
 import 'sppg_registration_page.dart';
 import 'widgets/partnership_app_bar.dart';
@@ -58,11 +59,7 @@ class PartnershipStatusPage extends StatelessWidget {
                               ),
                             ),
                             SizedBox(width: 6),
-                            Icon(
-                              Icons.apartment,
-                              size: 18,
-                              color: Colors.blueGrey,
-                            ),
+                            AppIcon(AppAssets.buildingIcon, size: 18),
                           ],
                         ),
                       ),

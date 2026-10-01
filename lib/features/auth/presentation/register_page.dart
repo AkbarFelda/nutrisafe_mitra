@@ -1,3 +1,5 @@
+import 'package:nutrisafe_mitra/core/constants/app_assets.dart';
+
 import '../../../core/widgets/responsive_content.dart';
 
 import 'package:flutter/material.dart';
@@ -68,11 +70,7 @@ class _RegisterPageState extends State<RegisterPage> {
             children: [
               AuthHeader(
                 bannerHeight: constraints.maxHeight < 400 ? 48 : 170,
-                leading: const Icon(
-                  Icons.shield_outlined,
-                  color: Color(0xFF00B0FF),
-                  size: 32,
-                ),
+                leading: Image.asset(AppAssets.logo, width: 32, height: 32),
               ),
               Expanded(
                 child: SingleChildScrollView(
@@ -97,9 +95,9 @@ class _RegisterPageState extends State<RegisterPage> {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              AuthFieldLabel(
+                              const AuthFieldLabel(
                                 text: 'Nama Lengkap',
-                                icon: Icons.person_outline,
+                                icon: AppAssets.userIcon,
                                 color: AppColors.textSecondary,
                               ),
                               TextFormField(
@@ -108,9 +106,9 @@ class _RegisterPageState extends State<RegisterPage> {
                                     _required(value, 'Nama lengkap'),
                               ),
                               const SizedBox(height: 14),
-                              AuthFieldLabel(
+                              const AuthFieldLabel(
                                 text: 'Email',
-                                icon: Icons.mail_outline,
+                                icon: AppAssets.emailIcon,
                                 color: AppColors.emailIcon,
                               ),
                               TextFormField(
@@ -127,9 +125,9 @@ class _RegisterPageState extends State<RegisterPage> {
                                 },
                               ),
                               const SizedBox(height: 14),
-                              AuthFieldLabel(
+                              const AuthFieldLabel(
                                 text: 'Password',
-                                icon: Icons.lock_outline,
+                                icon: AppAssets.passwordIcon,
                                 color: AppColors.passwordIcon,
                               ),
                               AuthPasswordField(
@@ -139,9 +137,9 @@ class _RegisterPageState extends State<RegisterPage> {
                                     _required(value, 'Password'),
                               ),
                               const SizedBox(height: 14),
-                              AuthFieldLabel(
+                              const AuthFieldLabel(
                                 text: 'No. Handphone',
-                                icon: Icons.phone_android_outlined,
+                                icon: AppAssets.mobilephoneIcon,
                                 color: Colors.indigo,
                               ),
                               TextFormField(
@@ -199,9 +197,9 @@ class _RegisterPageState extends State<RegisterPage> {
                                 },
                               ),
                               const SizedBox(height: 14),
-                              AuthFieldLabel(
+                              const AuthFieldLabel(
                                 text: 'Nama Instansi / Umum',
-                                icon: Icons.domain_outlined,
+                                icon: AppAssets.buildingIcon,
                                 color: Colors.teal,
                               ),
                               DropdownButtonFormField<String>(
@@ -227,9 +225,9 @@ class _RegisterPageState extends State<RegisterPage> {
                               ),
                               if (_selectedCategory == 'Instansi') ...[
                                 const SizedBox(height: 14),
-                                AuthFieldLabel(
+                                const AuthFieldLabel(
                                   text: 'Nama Instansi',
-                                  icon: Icons.business,
+                                  icon: AppAssets.buildingIcon,
                                   color: Colors.blueGrey,
                                 ),
                                 TextFormField(

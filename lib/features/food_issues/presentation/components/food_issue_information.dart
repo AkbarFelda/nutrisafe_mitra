@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/constants/app_assets.dart';
 import '../../domain/food_issue.dart';
 import 'food_issue_section.dart';
 import 'food_issue_info_row.dart';
@@ -14,14 +15,14 @@ class FoodIssueInformation extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         FoodIssueInfoRow(
-          Icons.schedule_outlined,
+          AppAssets.recentreportIcon,
           'Tanggal pelaporan',
           foodIssueDateTime(report.date),
         ),
         const Divider(height: 28),
-        FoodIssueInfoRow(Icons.person_outline, 'Pelapor', report.reporter),
+        FoodIssueInfoRow(AppAssets.userIcon, 'Pelapor', report.reporter),
         const SizedBox(height: 16),
-        FoodIssueInfoRow(Icons.school_outlined, 'Sekolah', report.school),
+        FoodIssueInfoRow(AppAssets.schoolIcon, 'Sekolah', report.school),
       ],
     ),
   );
