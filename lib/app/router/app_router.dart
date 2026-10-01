@@ -3,7 +3,6 @@ import '../../features/allergy_monitoring/presentation/student_allergy_monitorin
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/food_issues/presentation/problematic_food_reports_page.dart';
@@ -20,6 +19,9 @@ import '../../features/splash/presentation/splash_screen.dart';
 import '../../features/schools/presentation/school_list_page.dart';
 import '../../features/food_report/presentation/food_report_detail_page.dart';
 import '../../features/home/presentation/home_page.dart';
+import '../../features/notifications/presentation/notification_page.dart';
+import '../../features/profile/presentation/profile_page.dart';
+import 'widgets/main_navigation_shell.dart';
 
 class SessionRefresh extends ChangeNotifier {
   SessionRefresh(SessionCubit session) {
@@ -105,23 +107,34 @@ GoRouter createRouter(SessionCubit session, SessionRefresh refresh) => GoRouter(
       path: '/partnership/register',
       builder: (context, state) => const SppgRegistrationPage(),
     ),
-    ShellRoute(
-      builder: (context, state, child) => Scaffold(
-        appBar: AppBar(
-          title: const Text('NutriSafe Mitra'),
-          actions: [
-            TextButton(
-              onPressed: () => context.read<SessionCubit>().logout(),
-              child: const Text('Keluar'),
+    StatefulShellRoute.indexedStack(
+      builder: (context, state, navigationShell) => MainNavigationShell(
+        navigationShell: navigationShell,
+      ),
+      branches: [
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/notifications',
+              builder: (context, state) => const NotificationPage(),
             ),
           ],
         ),
-        body: child,
-      ),
-      routes: [
-        GoRoute(
-          path: '/',
-          builder: (context, state) => const HomePage(),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/',
+              builder: (context, state) => const HomePage(),
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/profile',
+              builder: (context, state) => const ProfilePage(),
+            ),
+          ],
         ),
       ],
     ),
