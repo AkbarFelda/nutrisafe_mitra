@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/food_issues/presentation/problematic_food_reports_page.dart';
 
 import '../../features/auth/presentation/login_page.dart';
+import '../../features/auth/presentation/forgot_password_page.dart';
 import '../../features/auth/presentation/register_page.dart';
 import '../../features/auth/presentation/session_cubit.dart';
 import '../../features/food_report/domain/food_report.dart';
@@ -21,6 +22,9 @@ import '../../features/food_report/presentation/food_report_detail_page.dart';
 import '../../features/home/presentation/home_page.dart';
 import '../../features/notifications/presentation/notification_page.dart';
 import '../../features/profile/presentation/profile_page.dart';
+import '../../features/profile/presentation/edit_profile_page.dart';
+import '../../features/profile/presentation/help_page.dart';
+import '../../features/profile/presentation/change_password_page.dart';
 import 'widgets/main_navigation_shell.dart';
 
 class SessionRefresh extends ChangeNotifier {
@@ -54,7 +58,8 @@ GoRouter createRouter(SessionCubit session, SessionRefresh refresh) => GoRouter(
   redirect: (context, state) {
     final status = session.state.status;
     final path = state.uri.path;
-    final isAuthPage = path == '/login' || path == '/register';
+    final isAuthPage =
+        path == '/login' || path == '/register' || path == '/forgot-password';
     if (!refresh.splashFinished ||
         status == SessionStatus.initial ||
         status == SessionStatus.failure) {
@@ -96,6 +101,10 @@ GoRouter createRouter(SessionCubit session, SessionRefresh refresh) => GoRouter(
     GoRoute(path: '/splash', builder: (context, state) => const SplashScreen()),
     GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
     GoRoute(
+      path: '/forgot-password',
+      builder: (context, state) => const ForgotPasswordPage(),
+    ),
+    GoRoute(
       path: '/register',
       builder: (context, state) => const RegisterPage(),
     ),
@@ -106,6 +115,18 @@ GoRouter createRouter(SessionCubit session, SessionRefresh refresh) => GoRouter(
     GoRoute(
       path: '/partnership/register',
       builder: (context, state) => const SppgRegistrationPage(),
+    ),
+    GoRoute(
+      path: '/profile/edit',
+      builder: (context, state) => const EditProfilePage(),
+    ),
+    GoRoute(
+      path: '/profile/help',
+      builder: (context, state) => const HelpPage(),
+    ),
+    GoRoute(
+      path: '/profile/change-password',
+      builder: (context, state) => const ChangePasswordPage(),
     ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) => MainNavigationShell(
