@@ -22,6 +22,9 @@ import '../../features/food_report/presentation/food_report_detail_page.dart';
 import '../../features/home/presentation/home_page.dart';
 import '../../features/notifications/presentation/notification_page.dart';
 import '../../features/profile/presentation/profile_page.dart';
+import '../../features/profile/presentation/edit_profile_page.dart';
+import '../../features/profile/presentation/help_page.dart';
+import '../../features/profile/presentation/change_password_page.dart';
 import 'widgets/main_navigation_shell.dart';
 
 class SessionRefresh extends ChangeNotifier {
@@ -112,6 +115,18 @@ GoRouter createRouter(SessionCubit session, SessionRefresh refresh) => GoRouter(
     GoRoute(
       path: '/partnership/register',
       builder: (context, state) => const SppgRegistrationPage(),
+    ),
+    GoRoute(
+      path: '/profile/edit',
+      builder: (context, state) => const EditProfilePage(),
+    ),
+    GoRoute(
+      path: '/profile/help',
+      builder: (context, state) => const HelpPage(),
+    ),
+    GoRoute(
+      path: '/profile/change-password',
+      builder: (context, state) => const ChangePasswordPage(),
     ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) => MainNavigationShell(

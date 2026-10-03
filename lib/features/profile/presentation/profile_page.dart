@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../app/theme/app_colors.dart';
 import '../../../core/constants/app_assets.dart';
@@ -26,22 +27,25 @@ class ProfilePage extends StatelessWidget {
       children: [
         const _ProfileHeader(),
         const SizedBox(height: 28),
-        const _ProfileMenuTile(
+        _ProfileMenuTile(
           icon: AppIcon(AppAssets.buildingIcon, size: 24),
-          title: 'Data Mitra / SPPG',
-          subtitle: 'Kelola informasi lembaga dan penanggung jawab',
+          title: 'Edit Profil',
+          subtitle: 'Kelola informasi akun dan kontak',
+          onTap: () => context.push('/profile/edit'),
         ),
         const SizedBox(height: 12),
-        const _ProfileMenuTile(
+        _ProfileMenuTile(
           icon: AppIcon(AppAssets.passwordIcon, size: 24),
           title: 'Keamanan Akun',
           subtitle: 'Atur kata sandi dan keamanan akun',
+          onTap: () => context.push('/profile/change-password'),
         ),
         const SizedBox(height: 12),
-        const _ProfileMenuTile(
+        _ProfileMenuTile(
           icon: Icon(Icons.help_outline_rounded),
           title: 'Pusat Bantuan',
           subtitle: 'Temukan jawaban atau hubungi tim NutriSafe',
+          onTap: () => context.push('/profile/help'),
         ),
         const SizedBox(height: 28),
         OutlinedButton.icon(
@@ -111,18 +115,20 @@ class _ProfileMenuTile extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.subtitle,
+    required this.onTap,
   });
 
   final Widget icon;
   final String title;
   final String subtitle;
+  final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) => Material(
     color: Colors.white,
     borderRadius: BorderRadius.circular(14),
     child: InkWell(
-      onTap: () {},
+      onTap: onTap,
       borderRadius: BorderRadius.circular(14),
       child: Padding(
         padding: const EdgeInsets.all(15),
