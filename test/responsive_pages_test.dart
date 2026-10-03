@@ -2,20 +2,28 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:nutrisafe_mitra/app/theme/app_theme.dart';
 import 'package:nutrisafe_mitra/features/auth/presentation/login_page.dart';
+import 'package:nutrisafe_mitra/features/auth/presentation/forgot_password_page.dart';
 import 'package:nutrisafe_mitra/features/auth/presentation/register_page.dart';
 import 'package:nutrisafe_mitra/features/food_scan/presentation/food_scan_report_page.dart';
 import 'package:nutrisafe_mitra/features/home/presentation/home_page.dart';
 import 'package:nutrisafe_mitra/features/partnership/presentation/partnership_status_page.dart';
 import 'package:nutrisafe_mitra/features/partnership/presentation/sppg_registration_page.dart';
+import 'package:nutrisafe_mitra/features/profile/presentation/change_password_page.dart';
+import 'package:nutrisafe_mitra/features/profile/presentation/edit_profile_page.dart';
+import 'package:nutrisafe_mitra/features/profile/presentation/help_page.dart';
 
 void main() {
   const pages = <String, Widget>{
     'login': LoginPage(),
     'register': RegisterPage(),
+    'forgot password': ForgotPasswordPage(),
     'partnership': PartnershipStatusPage(),
     'SPPG form': SppgRegistrationPage(),
     'dashboard': HomePage(),
     'food scanner': FoodScanReportPage(),
+    'edit profile': EditProfilePage(),
+    'help': HelpPage(),
+    'change password': ChangePasswordPage(),
   };
   const scenarios = [
     (name: 'small phone', size: Size(320, 568), scale: 1.0, keyboard: 0.0),
