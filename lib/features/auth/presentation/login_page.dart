@@ -111,8 +111,7 @@ class _LoginPageState extends State<LoginPage> {
                         alignment: Alignment.centerRight,
                         child: AuthTextLink(
                           label: 'Lupa password?',
-
-                          onTap: () => _showUnavailablePage('reset password'),
+                          onTap: () => context.push('/forgot-password'),
                         ),
                       ),
                       const SizedBox(height: 24),

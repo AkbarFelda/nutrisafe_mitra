@@ -8,6 +8,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/food_issues/presentation/problematic_food_reports_page.dart';
 
 import '../../features/auth/presentation/login_page.dart';
+import '../../features/auth/presentation/forgot_password_page.dart';
 import '../../features/auth/presentation/register_page.dart';
 import '../../features/auth/presentation/session_cubit.dart';
 import '../../features/food_report/domain/food_report.dart';
@@ -54,7 +55,8 @@ GoRouter createRouter(SessionCubit session, SessionRefresh refresh) => GoRouter(
   redirect: (context, state) {
     final status = session.state.status;
     final path = state.uri.path;
-    final isAuthPage = path == '/login' || path == '/register';
+    final isAuthPage =
+        path == '/login' || path == '/register' || path == '/forgot-password';
     if (!refresh.splashFinished ||
         status == SessionStatus.initial ||
         status == SessionStatus.failure) {
@@ -95,6 +97,10 @@ GoRouter createRouter(SessionCubit session, SessionRefresh refresh) => GoRouter(
     ),
     GoRoute(path: '/splash', builder: (context, state) => const SplashScreen()),
     GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
+    GoRoute(
+      path: '/forgot-password',
+      builder: (context, state) => const ForgotPasswordPage(),
+    ),
     GoRoute(
       path: '/register',
       builder: (context, state) => const RegisterPage(),
