@@ -3,6 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:nutrisafe_mitra/app/theme/app_theme.dart';
 import 'package:nutrisafe_mitra/features/auth/presentation/login_page.dart';
 import 'package:nutrisafe_mitra/features/auth/presentation/register_page.dart';
+import 'package:nutrisafe_mitra/features/food_scan/presentation/food_scan_report_page.dart';
+import 'package:nutrisafe_mitra/features/home/presentation/home_page.dart';
 import 'package:nutrisafe_mitra/features/partnership/presentation/partnership_status_page.dart';
 import 'package:nutrisafe_mitra/features/partnership/presentation/sppg_registration_page.dart';
 
@@ -12,6 +14,8 @@ void main() {
     'register': RegisterPage(),
     'partnership': PartnershipStatusPage(),
     'SPPG form': SppgRegistrationPage(),
+    'dashboard': HomePage(),
+    'food scanner': FoodScanReportPage(),
   };
   const scenarios = [
     (name: 'small phone', size: Size(320, 568), scale: 1.0, keyboard: 0.0),
@@ -43,8 +47,10 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        final scroll = find.byType(SingleChildScrollView).first;
-        await tester.drag(scroll, const Offset(0, -1200));
+        final scroll = find.byType(Scrollable);
+        if (scroll.evaluate().isNotEmpty) {
+          await tester.drag(scroll.first, const Offset(0, -1200));
+        }
         await tester.pumpAndSettle();
       }, variant: TargetPlatformVariant({TargetPlatform.linux}));
     }

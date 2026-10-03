@@ -2,10 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class MainNavigationShell extends StatelessWidget {
-  const MainNavigationShell({
-    super.key,
-    required this.navigationShell,
-  });
+  const MainNavigationShell({super.key, required this.navigationShell});
 
   final StatefulNavigationShell navigationShell;
 
@@ -48,9 +45,7 @@ class MainNavigationShell extends StatelessWidget {
             children: List.generate(_destinations.length, (index) {
               final destination = _destinations[index];
               final selected = navigationShell.currentIndex == index;
-              final color = selected
-                  ? const Color(0xFF43A047)
-                  : Colors.black54;
+              final color = selected ? const Color(0xFF43A047) : Colors.black54;
 
               return Expanded(
                 child: InkWell(
@@ -77,6 +72,8 @@ class MainNavigationShell extends StatelessWidget {
                             const SizedBox(height: 2),
                             Text(
                               destination.label,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: Theme.of(context).textTheme.labelSmall
                                   ?.copyWith(
                                     color: color,

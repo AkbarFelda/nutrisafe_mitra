@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/constants/app_assets.dart';
 import '../../../core/widgets/app_icon.dart';
+import '../../../core/widgets/responsive_content.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -45,30 +46,37 @@ class HomePage extends StatelessWidget {
   ];
 
   @override
-  Widget build(BuildContext context) => ColoredBox(
-    color: AppColors.dashboardBackground,
-    child: SafeArea(
-      bottom: false,
-      child: CustomScrollView(
-        key: const Key('home-scroll-view'),
-        slivers: [
-          const SliverToBoxAdapter(child: _HomeHeader()),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(24, 18, 24, 10),
-            sliver: SliverList.list(
-              children: [
-                const _SectionTitle('Menu Mitra'),
-                const SizedBox(height: 8),
-                _MenuGrid(items: _partnerMenus),
-                const SizedBox(height: 16),
-                const _SectionTitle('Menu Pengelola'),
-                const SizedBox(height: 8),
-                _MenuGrid(items: _managerMenus),
-                const SizedBox(height: 18),
-              ],
+  Widget build(BuildContext context) => ResponsiveTextScope(
+    child: ColoredBox(
+      color: AppColors.dashboardBackground,
+      child: SafeArea(
+        bottom: false,
+        child: CustomScrollView(
+          key: const Key('home-scroll-view'),
+          slivers: [
+            const SliverToBoxAdapter(child: _HomeHeader()),
+            SliverPadding(
+              padding: EdgeInsets.fromLTRB(
+                MediaQuery.sizeOf(context).width < 360 ? 16 : 24,
+                18,
+                MediaQuery.sizeOf(context).width < 360 ? 16 : 24,
+                10,
+              ),
+              sliver: SliverList.list(
+                children: [
+                  const _SectionTitle('Menu Mitra'),
+                  const SizedBox(height: 8),
+                  _MenuGrid(items: _partnerMenus),
+                  const SizedBox(height: 16),
+                  const _SectionTitle('Menu Pengelola'),
+                  const SizedBox(height: 8),
+                  _MenuGrid(items: _managerMenus),
+                  const SizedBox(height: 18),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     ),
   );
@@ -127,23 +135,30 @@ class _MenuGrid extends StatelessWidget {
   final List<_HomeMenu> items;
 
   @override
-  Widget build(BuildContext context) => GridView.builder(
-    shrinkWrap: true,
-    physics: const NeverScrollableScrollPhysics(),
-    itemCount: items.length,
-    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-      crossAxisCount: 2,
-      crossAxisSpacing: 18,
-      mainAxisSpacing: 10,
-      childAspectRatio: 1.22,
-    ),
-    itemBuilder: (context, index) => _MenuCard(menu: items[index]),
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) {
+      final compact = constraints.maxWidth < 330;
+      return GridView.builder(
+        shrinkWrap: true,
+        physics: const NeverScrollableScrollPhysics(),
+        itemCount: items.length,
+        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: compact ? 10 : 18,
+          mainAxisSpacing: 10,
+          mainAxisExtent: compact ? 118 : 126,
+        ),
+        itemBuilder: (context, index) =>
+            _MenuCard(menu: items[index], compact: compact),
+      );
+    },
   );
 }
 
 class _MenuCard extends StatelessWidget {
-  const _MenuCard({required this.menu});
+  const _MenuCard({required this.menu, required this.compact});
   final _HomeMenu menu;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) => Material(
@@ -154,17 +169,20 @@ class _MenuCard extends StatelessWidget {
       key: Key('home-menu-${menu.route}'),
       onTap: () => context.push(menu.route),
       child: Padding(
-        padding: const EdgeInsets.all(12),
+        padding: EdgeInsets.all(compact ? 8 : 12),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            AppIcon(menu.icon, size: 42),
-            const SizedBox(height: 10),
+            AppIcon(menu.icon, size: compact ? 34 : 42),
+            SizedBox(height: compact ? 7 : 10),
             Text(
               menu.label,
               textAlign: TextAlign.center,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
               style: Theme.of(context).textTheme.labelLarge?.copyWith(
                 color: Colors.white,
+                fontSize: compact ? 10.5 : 12,
                 fontWeight: FontWeight.w700,
                 height: 1.3,
               ),
