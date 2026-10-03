@@ -197,104 +197,113 @@ class _FoodScanReportPageState extends State<FoodScanReportPage> {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    backgroundColor: const Color(0xFFF3FAFF),
-    appBar: AppBar(
+  Widget build(BuildContext context) => ResponsiveTextScope(
+    child: Scaffold(
       backgroundColor: const Color(0xFFF3FAFF),
-      foregroundColor: AppColors.heading,
-      scrolledUnderElevation: 0,
-      leading: IconButton(
-        tooltip: 'Kembali',
-        onPressed: _goBack,
-        icon: const Icon(Icons.arrow_back_ios_new),
+      appBar: AppBar(
+        backgroundColor: const Color(0xFFF3FAFF),
+        foregroundColor: AppColors.heading,
+        scrolledUnderElevation: 0,
+        leading: IconButton(
+          tooltip: 'Kembali',
+          onPressed: _goBack,
+          icon: const Icon(Icons.arrow_back_ios_new),
+        ),
+        title: const Text(
+          'Scan & Pelaporan Menu',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(fontSize: 17, fontWeight: FontWeight.w700),
+        ),
       ),
-      title: const Text(
-        'Scan & Pelaporan Menu',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-      ),
-    ),
-    body: SafeArea(
-      top: false,
-      child: ResponsiveContent(
-        child: Form(
-          key: _formKey,
-          child: ListView(
-            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            padding: const EdgeInsets.fromLTRB(20, 12, 20, 32),
-            children: [
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 250),
-                child: _reportSent
-                    ? const _SentBanner(key: ValueKey('sent-banner'))
-                    : const SizedBox.shrink(key: ValueKey('no-sent-banner')),
+      body: SafeArea(
+        top: false,
+        child: ResponsiveContent(
+          child: Form(
+            key: _formKey,
+            child: ListView(
+              keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+              padding: EdgeInsets.fromLTRB(
+                MediaQuery.sizeOf(context).width < 360 ? 14 : 20,
+                12,
+                MediaQuery.sizeOf(context).width < 360 ? 14 : 20,
+                32,
               ),
-              if (_reportSent) const SizedBox(height: 16),
-              const FoodScanIntroCard(),
-              const SizedBox(height: 22),
-              MenuNameField(controller: _menuNameController),
-              const SizedBox(height: 16),
-              _PhotoCard(
-                photoBytes: _photoBytes,
-                isLoading: _isPickingImage,
-                onCamera: () => _pickImage(ImageSource.camera),
-                onGallery: () => _pickImage(ImageSource.gallery),
-                onRemove: () => setState(() {
-                  _photoBytes = null;
-                  _hasAnalysis = false;
-                  _containsAllergen = false;
-                  _usesRecommendation = false;
-                  _reportSent = false;
-                  _detectedAllergen = null;
-                  _selectedRecommendation = null;
-                }),
-              ),
-              const SizedBox(height: 14),
-              AnalyzeFoodButton(isLoading: _isAnalyzing, onPressed: _analyze),
-              const SizedBox(height: 20),
-              _NutritionSummary(hasAnalysis: _hasAnalysis),
-              if (_hasAnalysis) ...[
-                const SizedBox(height: 13),
-                _AnalysisStatus(
-                  containsAllergen: _containsAllergen,
-                  usesRecommendation: _usesRecommendation,
-                  selectedRecommendation: _selectedRecommendation,
+              children: [
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 250),
+                  child: _reportSent
+                      ? const _SentBanner(key: ValueKey('sent-banner'))
+                      : const SizedBox.shrink(key: ValueKey('no-sent-banner')),
                 ),
-              ],
-              const SizedBox(height: 16),
-              _DetectedIngredients(
-                hasAnalysis: _hasAnalysis,
-                containsAllergen: _containsAllergen,
-                detectedAllergen: _detectedAllergen,
-              ),
-              if (_hasAnalysis) ...[
+                if (_reportSent) const SizedBox(height: 16),
+                const FoodScanIntroCard(),
+                const SizedBox(height: 22),
+                MenuNameField(controller: _menuNameController),
                 const SizedBox(height: 16),
-                _AllergyResultCard(
-                  containsAllergen: _containsAllergen,
-                  usesRecommendation: _usesRecommendation,
-                  selectedRecommendation: _selectedRecommendation,
+                _PhotoCard(
+                  photoBytes: _photoBytes,
+                  isLoading: _isPickingImage,
+                  onCamera: () => _pickImage(ImageSource.camera),
+                  onGallery: () => _pickImage(ImageSource.gallery),
+                  onRemove: () => setState(() {
+                    _photoBytes = null;
+                    _hasAnalysis = false;
+                    _containsAllergen = false;
+                    _usesRecommendation = false;
+                    _reportSent = false;
+                    _detectedAllergen = null;
+                    _selectedRecommendation = null;
+                  }),
                 ),
-                if (_containsAllergen) ...[
-                  const SizedBox(height: 16),
-                  _RecommendationSection(
-                    allergen: _detectedAllergen ?? 'alergen',
-                    onSelect: _applyRecommendation,
+                const SizedBox(height: 14),
+                AnalyzeFoodButton(isLoading: _isAnalyzing, onPressed: _analyze),
+                const SizedBox(height: 20),
+                _NutritionSummary(hasAnalysis: _hasAnalysis),
+                if (_hasAnalysis) ...[
+                  const SizedBox(height: 13),
+                  _AnalysisStatus(
+                    containsAllergen: _containsAllergen,
+                    usesRecommendation: _usesRecommendation,
+                    selectedRecommendation: _selectedRecommendation,
                   ),
                 ],
+                const SizedBox(height: 16),
+                _DetectedIngredients(
+                  hasAnalysis: _hasAnalysis,
+                  containsAllergen: _containsAllergen,
+                  detectedAllergen: _detectedAllergen,
+                ),
+                if (_hasAnalysis) ...[
+                  const SizedBox(height: 16),
+                  _AllergyResultCard(
+                    containsAllergen: _containsAllergen,
+                    usesRecommendation: _usesRecommendation,
+                    selectedRecommendation: _selectedRecommendation,
+                  ),
+                  if (_containsAllergen) ...[
+                    const SizedBox(height: 16),
+                    _RecommendationSection(
+                      allergen: _detectedAllergen ?? 'alergen',
+                      onSelect: _applyRecommendation,
+                    ),
+                  ],
+                ],
+                const SizedBox(height: 26),
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 250),
+                  child: _reportSent
+                      ? const SizedBox.shrink(
+                          key: ValueKey('report-already-sent'),
+                        )
+                      : SubmitFoodReportButton(
+                          key: const ValueKey('submit-report-button'),
+                          isLoading: _isSubmitting,
+                          onPressed: _submit,
+                        ),
+                ),
               ],
-              const SizedBox(height: 26),
-              AnimatedSwitcher(
-                duration: const Duration(milliseconds: 250),
-                child: _reportSent
-                    ? const SizedBox.shrink(
-                        key: ValueKey('report-already-sent'),
-                      )
-                    : SubmitFoodReportButton(
-                        key: const ValueKey('submit-report-button'),
-                        isLoading: _isSubmitting,
-                        onPressed: _submit,
-                      ),
-              ),
-            ],
+            ),
           ),
         ),
       ),
@@ -405,26 +414,47 @@ class _PhotoCard extends StatelessWidget {
               ),
       ),
       const SizedBox(height: 12),
-      Row(
-        children: [
-          Expanded(
-            child: FilledButton.icon(
-              key: const Key('open-camera'),
-              onPressed: isLoading ? null : onCamera,
-              icon: const Icon(Icons.camera_alt_outlined),
-              label: const Text('Buka Kamera'),
+      LayoutBuilder(
+        builder: (context, constraints) {
+          final compact = constraints.maxWidth < 300;
+          final buttonStyle = ButtonStyle(
+            padding: WidgetStatePropertyAll(
+              EdgeInsets.symmetric(horizontal: compact ? 8 : 16),
             ),
-          ),
-          const SizedBox(width: 10),
-          Expanded(
-            child: OutlinedButton.icon(
-              key: const Key('open-gallery'),
-              onPressed: isLoading ? null : onGallery,
-              icon: const Icon(Icons.photo_library_outlined),
-              label: const Text('Galeri'),
+            textStyle: WidgetStatePropertyAll(
+              TextStyle(fontSize: compact ? 11 : 14),
             ),
-          ),
-        ],
+          );
+          return Row(
+            children: [
+              Expanded(
+                child: FilledButton.icon(
+                  key: const Key('open-camera'),
+                  onPressed: isLoading ? null : onCamera,
+                  style: buttonStyle,
+                  icon: Icon(
+                    Icons.camera_alt_outlined,
+                    size: compact ? 18 : 24,
+                  ),
+                  label: const Text('Buka Kamera'),
+                ),
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: OutlinedButton.icon(
+                  key: const Key('open-gallery'),
+                  onPressed: isLoading ? null : onGallery,
+                  style: buttonStyle,
+                  icon: Icon(
+                    Icons.photo_library_outlined,
+                    size: compact ? 18 : 24,
+                  ),
+                  label: const Text('Galeri'),
+                ),
+              ),
+            ],
+          );
+        },
       ),
     ],
   );
