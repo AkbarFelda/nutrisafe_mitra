@@ -25,7 +25,7 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      final submit = find.text('Periksa Formulir');
+      final submit = find.text('Kirim Pendaftaran');
       await tester.ensureVisible(submit);
       await tester.tap(submit);
       await tester.pumpAndSettle();
@@ -60,7 +60,7 @@ void main() {
       await tester.tap(submit);
       await tester.pumpAndSettle();
       expect(
-        find.textContaining('Data valid dengan 0 lampiran.'),
+        find.text('Proposal PDF dan foto dapur wajib dilampirkan.'),
         findsOneWidget,
       );
       expect(tester.takeException(), isNull);

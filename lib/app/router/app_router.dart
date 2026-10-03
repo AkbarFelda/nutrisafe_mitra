@@ -16,6 +16,7 @@ import '../../features/food_report/presentation/food_report_history_page.dart';
 import '../../features/food_scan/presentation/food_scan_report_page.dart';
 import '../../features/partnership/presentation/partnership_status_page.dart';
 import '../../features/partnership/presentation/sppg_registration_page.dart';
+import '../../features/partnership/data/sppg_registration_repository.dart';
 import '../../features/splash/presentation/splash_screen.dart';
 import '../../features/schools/presentation/school_list_page.dart';
 import '../../features/food_report/presentation/food_report_detail_page.dart';
@@ -52,7 +53,11 @@ class SessionRefresh extends ChangeNotifier {
   }
 }
 
-GoRouter createRouter(SessionCubit session, SessionRefresh refresh) => GoRouter(
+GoRouter createRouter(
+  SessionCubit session,
+  SessionRefresh refresh, {
+  SppgRegistrationRepository? sppgRegistrationRepository,
+}) => GoRouter(
   initialLocation: '/splash',
   refreshListenable: refresh,
   redirect: (context, state) {
@@ -114,7 +119,8 @@ GoRouter createRouter(SessionCubit session, SessionRefresh refresh) => GoRouter(
     ),
     GoRoute(
       path: '/partnership/register',
-      builder: (context, state) => const SppgRegistrationPage(),
+      builder: (context, state) =>
+          SppgRegistrationPage(repository: sppgRegistrationRepository),
     ),
     GoRoute(
       path: '/profile/edit',

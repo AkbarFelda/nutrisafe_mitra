@@ -1,16 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../app/theme/app_colors.dart';
 import '../data/registration_attachment_picker.dart';
+import '../data/sppg_registration_repository.dart';
+import '../data/sppg_registration_request.dart';
+import 'sppg_registration_cubit.dart';
 import 'widgets/partnership_app_bar.dart';
 import 'widgets/registration_documents.dart';
 import 'widgets/sppg_form_field.dart';
 import 'widgets/sppg_form_section.dart';
 
 class SppgRegistrationPage extends StatefulWidget {
-  const SppgRegistrationPage({super.key, this.attachmentPicker});
+  const SppgRegistrationPage({
+    super.key,
+    this.attachmentPicker,
+    this.repository,
+  });
   final RegistrationAttachmentPicker? attachmentPicker;
+  final SppgRegistrationRepository? repository;
 
   @override
   State<SppgRegistrationPage> createState() => _SppgRegistrationPageState();
@@ -56,23 +65,76 @@ class _SppgRegistrationPageState extends State<SppgRegistrationPage> {
   String? _required(String? value) =>
       value == null || value.trim().isEmpty ? 'Kolom ini wajib diisi.' : null;
 
-  void _validate() {
+  void _submit(BuildContext context) {
     setState(() => _submitted = true);
     if (!_formKey.currentState!.validate()) return;
-    FocusScope.of(context).unfocus();
-    ScaffoldMessenger.of(context)
-      ..hideCurrentSnackBar()
-      ..showSnackBar(
-        SnackBar(
-          content: Text(
-            'Data valid dengan ${_attachments.length} lampiran. Pengiriman pendaftaran belum tersedia.',
+
+    final proposal = _attachments.where((file) => file.isPdf).firstOrNull;
+    final kitchenPhoto = _attachments.where((file) => !file.isPdf).firstOrNull;
+    if (proposal == null || kitchenPhoto == null) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('Proposal PDF dan foto dapur wajib dilampirkan.'),
           ),
-        ),
-      );
+        );
+      return;
+    }
+
+    FocusScope.of(context).unfocus();
+    final repository = widget.repository;
+    if (repository == null) return;
+    context.read<SppgRegistrationCubit>().submit(
+      SppgRegistrationRequest(
+        registrantName: _pendaftarController.text.trim(),
+        institutionName: _instansiController.text.trim(),
+        nikNpwp: _nikNpwpController.text.trim(),
+        email: _emailController.text.trim(),
+        phone: _hpController.text.trim(),
+        sppgName: _namaSppgController.text.trim(),
+        sppgAddress: _alamatSppgController.text.trim(),
+        productionCapacity: int.parse(_kapasitasController.text),
+        proposalName: proposal.name,
+        proposalBytes: proposal.bytes,
+        kitchenPhotoName: kitchenPhoto.name,
+        kitchenPhotoBytes: kitchenPhoto.bytes,
+      ),
+    );
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context) {
+    final repository = widget.repository;
+    if (repository == null) {
+      return _buildScaffold(context, const SppgRegistrationState());
+    }
+    return BlocProvider(
+      create: (_) => SppgRegistrationCubit(repository),
+      child: BlocConsumer<SppgRegistrationCubit, SppgRegistrationState>(
+        listener: (context, state) {
+          final message = state.message;
+          if (message == null) return;
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                content: Text(message),
+                backgroundColor: state.status == SppgRegistrationStatus.success
+                    ? Colors.green.shade700
+                    : null,
+              ),
+            );
+        },
+        builder: _buildScaffold,
+      ),
+    );
+  }
+
+  Widget _buildScaffold(
+    BuildContext context,
+    SppgRegistrationState registrationState,
+  ) => Scaffold(
     backgroundColor: AppColors.loginBackground,
     appBar: const PartnershipAppBar(
       title: 'Pendaftaran Mitra SPPG Baru',
@@ -199,15 +261,28 @@ class _SppgRegistrationPageState extends State<SppgRegistrationPage> {
                           ),
                           const SizedBox(height: 12),
                           const Text(
-                            'Lampiran tersimpan sementara selama halaman ini dibuka dan belum dikirim.',
+                            'Proposal PDF dan satu foto dapur wajib dilampirkan.',
                           ),
                         ],
                       ),
                       Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 16),
                         child: FilledButton(
-                          onPressed: _validate,
-                          child: const Text('Periksa Formulir'),
+                          onPressed:
+                              registrationState.status ==
+                                  SppgRegistrationStatus.loading
+                              ? null
+                              : () => _submit(context),
+                          child:
+                              registrationState.status ==
+                                  SppgRegistrationStatus.loading
+                              ? const SizedBox.square(
+                                  dimension: 20,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Text('Kirim Pendaftaran'),
                         ),
                       ),
                     ],
