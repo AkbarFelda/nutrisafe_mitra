@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../app/theme/app_colors.dart';
 import '../../../core/constants/app_assets.dart';
 import '../../../core/widgets/app_icon.dart';
+import '../../../core/widgets/responsive_content.dart';
 import '../../auth/presentation/session_cubit.dart';
 
 class ProfilePage extends StatelessWidget {
@@ -21,48 +22,56 @@ class ProfilePage extends StatelessWidget {
       foregroundColor: AppColors.heading,
       elevation: 0,
     ),
-    body: ListView(
-      key: const Key('profile-scroll-view'),
-      padding: const EdgeInsets.fromLTRB(20, 28, 20, 32),
-      children: [
-        const _ProfileHeader(),
-        const SizedBox(height: 28),
-        _ProfileMenuTile(
-          icon: AppIcon(AppAssets.buildingIcon, size: 24),
-          title: 'Edit Profil',
-          subtitle: 'Kelola informasi akun dan kontak',
-          onTap: () => context.push('/profile/edit'),
+    body: ResponsiveContent(
+      maxWidth: 720,
+      child: ListView(
+        key: const Key('profile-scroll-view'),
+        padding: EdgeInsets.fromLTRB(
+          MediaQuery.sizeOf(context).width < 400 ? 16 : 28,
+          28,
+          MediaQuery.sizeOf(context).width < 400 ? 16 : 28,
+          32,
         ),
-        const SizedBox(height: 12),
-        _ProfileMenuTile(
-          icon: AppIcon(AppAssets.passwordIcon, size: 24),
-          title: 'Keamanan Akun',
-          subtitle: 'Atur kata sandi dan keamanan akun',
-          onTap: () => context.push('/profile/change-password'),
-        ),
-        const SizedBox(height: 12),
-        _ProfileMenuTile(
-          icon: Icon(Icons.help_outline_rounded),
-          title: 'Pusat Bantuan',
-          subtitle: 'Temukan jawaban atau hubungi tim NutriSafe',
-          onTap: () => context.push('/profile/help'),
-        ),
-        const SizedBox(height: 28),
-        OutlinedButton.icon(
-          key: const Key('profile-logout-button'),
-          onPressed: () => context.read<SessionCubit>().logout(),
-          icon: const Icon(Icons.logout_rounded),
-          label: const Text('Keluar dari akun'),
-          style: OutlinedButton.styleFrom(
-            foregroundColor: Colors.red.shade700,
-            side: BorderSide(color: Colors.red.shade200),
-            padding: const EdgeInsets.symmetric(vertical: 14),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
+        children: [
+          const _ProfileHeader(),
+          const SizedBox(height: 28),
+          _ProfileMenuTile(
+            icon: AppIcon(AppAssets.buildingIcon, size: 24),
+            title: 'Edit Profil',
+            subtitle: 'Kelola informasi akun dan kontak',
+            onTap: () => context.push('/profile/edit'),
+          ),
+          const SizedBox(height: 12),
+          _ProfileMenuTile(
+            icon: AppIcon(AppAssets.passwordIcon, size: 24),
+            title: 'Keamanan Akun',
+            subtitle: 'Atur kata sandi dan keamanan akun',
+            onTap: () => context.push('/profile/change-password'),
+          ),
+          const SizedBox(height: 12),
+          _ProfileMenuTile(
+            icon: Icon(Icons.help_outline_rounded),
+            title: 'Pusat Bantuan',
+            subtitle: 'Temukan jawaban atau hubungi tim NutriSafe',
+            onTap: () => context.push('/profile/help'),
+          ),
+          const SizedBox(height: 28),
+          OutlinedButton.icon(
+            key: const Key('profile-logout-button'),
+            onPressed: () => context.read<SessionCubit>().logout(),
+            icon: const Icon(Icons.logout_rounded),
+            label: const Text('Keluar dari akun'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: Colors.red.shade700,
+              side: BorderSide(color: Colors.red.shade200),
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
           ),
-        ),
-      ],
+        ],
+      ),
     ),
   );
 }

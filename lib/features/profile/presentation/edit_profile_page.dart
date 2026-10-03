@@ -39,7 +39,11 @@ class _EditProfilePageState extends State<EditProfilePage> {
               const CircleAvatar(
                 radius: 50,
                 backgroundColor: AppColors.primary,
-                child: Icon(Icons.person_rounded, color: Colors.white, size: 58),
+                child: Icon(
+                  Icons.person_rounded,
+                  color: Colors.white,
+                  size: 58,
+                ),
               ),
               Material(
                 color: AppColors.heading,
@@ -48,9 +52,15 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   key: const Key('change-profile-photo'),
                   tooltip: 'Ubah foto profil',
                   onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Pilih foto profil dari perangkat.')),
+                    const SnackBar(
+                      content: Text('Pilih foto profil dari perangkat.'),
+                    ),
                   ),
-                  icon: const Icon(Icons.camera_alt_rounded, color: Colors.white, size: 20),
+                  icon: const Icon(
+                    Icons.camera_alt_rounded,
+                    color: Colors.white,
+                    size: 20,
+                  ),
                 ),
               ),
             ],
@@ -86,7 +96,9 @@ class _EditProfilePageState extends State<EditProfilePage> {
                   onPressed: () {
                     if (!(_formKey.currentState?.validate() ?? false)) return;
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Profil berhasil disimpan.')),
+                      const SnackBar(
+                        content: Text('Profil berhasil disimpan.'),
+                      ),
                     );
                   },
                   child: const Text('Simpan Perubahan'),

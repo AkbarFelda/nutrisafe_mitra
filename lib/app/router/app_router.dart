@@ -129,9 +129,8 @@ GoRouter createRouter(SessionCubit session, SessionRefresh refresh) => GoRouter(
       builder: (context, state) => const ChangePasswordPage(),
     ),
     StatefulShellRoute.indexedStack(
-      builder: (context, state, navigationShell) => MainNavigationShell(
-        navigationShell: navigationShell,
-      ),
+      builder: (context, state, navigationShell) =>
+          MainNavigationShell(navigationShell: navigationShell),
       branches: [
         StatefulShellBranch(
           routes: [
@@ -143,10 +142,7 @@ GoRouter createRouter(SessionCubit session, SessionRefresh refresh) => GoRouter(
         ),
         StatefulShellBranch(
           routes: [
-            GoRoute(
-              path: '/',
-              builder: (context, state) => const HomePage(),
-            ),
+            GoRoute(path: '/', builder: (context, state) => const HomePage()),
           ],
         ),
         StatefulShellBranch(

@@ -51,19 +51,40 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const Text('Kata sandi saat ini', style: TextStyle(fontWeight: FontWeight.w600)),
+          const Text(
+            'Kata sandi saat ini',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
           const SizedBox(height: 8),
-          AuthPasswordField(controller: _currentController, hintText: 'Masukkan kata sandi saat ini'),
+          AuthPasswordField(
+            controller: _currentController,
+            hintText: 'Masukkan kata sandi saat ini',
+          ),
           const SizedBox(height: 18),
-          const Text('Kata sandi baru', style: TextStyle(fontWeight: FontWeight.w600)),
+          const Text(
+            'Kata sandi baru',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
           const SizedBox(height: 8),
-          AuthPasswordField(controller: _newController, hintText: 'Minimal 8 karakter'),
+          AuthPasswordField(
+            controller: _newController,
+            hintText: 'Minimal 8 karakter',
+          ),
           const SizedBox(height: 18),
-          const Text('Konfirmasi kata sandi baru', style: TextStyle(fontWeight: FontWeight.w600)),
+          const Text(
+            'Konfirmasi kata sandi baru',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
           const SizedBox(height: 8),
-          AuthPasswordField(controller: _confirmationController, hintText: 'Ulangi kata sandi baru'),
+          AuthPasswordField(
+            controller: _confirmationController,
+            hintText: 'Ulangi kata sandi baru',
+          ),
           const SizedBox(height: 10),
-          const Text('Gunakan kombinasi huruf, angka, dan simbol agar akun lebih aman.', style: TextStyle(fontSize: 12, color: Colors.black54)),
+          const Text(
+            'Gunakan kombinasi huruf, angka, dan simbol agar akun lebih aman.',
+            style: TextStyle(fontSize: 12, color: Colors.black54),
+          ),
           const SizedBox(height: 24),
           FilledButton(
             key: const Key('change-password-button'),

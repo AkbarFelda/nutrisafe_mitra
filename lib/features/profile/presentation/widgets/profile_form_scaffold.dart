@@ -54,9 +54,6 @@ class ProfileSectionCard extends StatelessWidget {
     elevation: 0,
     color: Colors.white,
     shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-    child: Padding(
-      padding: const EdgeInsets.all(20),
-      child: child,
-    ),
+    child: Padding(padding: const EdgeInsets.all(20), child: child),
   );
 }

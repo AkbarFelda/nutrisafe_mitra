@@ -120,10 +120,11 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                     Text(
                       _title,
                       textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                        color: AppColors.heading,
-                        fontWeight: FontWeight.w700,
-                      ),
+                      style: Theme.of(context).textTheme.headlineSmall
+                          ?.copyWith(
+                            color: AppColors.heading,
+                            fontWeight: FontWeight.w700,
+                          ),
                     ),
                     const SizedBox(height: 10),
                     Text(
@@ -182,10 +183,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           },
         ),
         const SizedBox(height: 24),
-        AuthPrimaryButton(
-          label: 'Kirim Kode',
-          onPressed: _submit,
-        ),
+        AuthPrimaryButton(label: 'Kirim Kode', onPressed: _submit),
       ],
     ),
     _ResetStep.otp => Column(
@@ -217,7 +215,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
                         _otpFocusNodes[index - 1].requestFocus();
                       }
                     },
-                    decoration: const InputDecoration(contentPadding: EdgeInsets.symmetric(vertical: 14)),
+                    decoration: const InputDecoration(
+                      contentPadding: EdgeInsets.symmetric(vertical: 14),
+                    ),
                   ),
                 ),
               );
@@ -229,7 +229,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         const SizedBox(height: 10),
         TextButton(
           onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Kode verifikasi telah dikirim ulang.')),
+            const SnackBar(
+              content: Text('Kode verifikasi telah dikirim ulang.'),
+            ),
           ),
           child: const Text('Kirim ulang kode'),
         ),
@@ -238,14 +240,20 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     _ResetStep.password => Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Text('Kata sandi baru', style: TextStyle(fontWeight: FontWeight.w600)),
+        const Text(
+          'Kata sandi baru',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
         const SizedBox(height: 8),
         AuthPasswordField(
           controller: _passwordController,
           hintText: 'Minimal 8 karakter',
         ),
         const SizedBox(height: 16),
-        const Text('Konfirmasi kata sandi', style: TextStyle(fontWeight: FontWeight.w600)),
+        const Text(
+          'Konfirmasi kata sandi',
+          style: TextStyle(fontWeight: FontWeight.w600),
+        ),
         const SizedBox(height: 8),
         AuthPasswordField(
           controller: _confirmationController,
@@ -263,7 +271,9 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
             }
             if (_passwordController.text != _confirmationController.text) {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Konfirmasi kata sandi tidak cocok.')),
+                const SnackBar(
+                  content: Text('Konfirmasi kata sandi tidak cocok.'),
+                ),
               );
               return;
             }
