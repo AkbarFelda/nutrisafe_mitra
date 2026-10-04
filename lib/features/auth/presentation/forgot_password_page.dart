@@ -1,16 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../app/theme/app_colors.dart';
+import '../../../core/presentation/api_cubit.dart';
 import '../../../core/widgets/responsive_content.dart';
+import '../data/password_repository.dart';
 import 'widgets/auth_password_field.dart';
 import 'widgets/auth_primary_button.dart';
 
 enum _ResetStep { email, otp, password, success }
 
 class ForgotPasswordPage extends StatefulWidget {
-  const ForgotPasswordPage({super.key});
+  const ForgotPasswordPage({super.key, this.repository});
+
+  final PasswordRepository? repository;
 
   @override
   State<ForgotPasswordPage> createState() => _ForgotPasswordPageState();
@@ -23,6 +28,7 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   final _confirmationController = TextEditingController();
   final _otpControllers = List.generate(6, (_) => TextEditingController());
   final _otpFocusNodes = List.generate(6, (_) => FocusNode());
+  final _apiCubit = ApiCubit<void>();
   _ResetStep _step = _ResetStep.email;
 
   @override
@@ -36,10 +42,11 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
     for (final focusNode in _otpFocusNodes) {
       focusNode.dispose();
     }
+    _apiCubit.close();
     super.dispose();
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
     if (_step == _ResetStep.otp &&
         _otpControllers.any((controller) => controller.text.isEmpty)) {
@@ -48,14 +55,23 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
       );
       return;
     }
-    setState(() {
-      _step = switch (_step) {
-        _ResetStep.email => _ResetStep.otp,
-        _ResetStep.otp => _ResetStep.password,
-        _ResetStep.password => _ResetStep.success,
-        _ResetStep.success => _ResetStep.success,
-      };
-    });
+    if (_step == _ResetStep.email && widget.repository != null) {
+      final success = await _apiCubit.run(
+        () => widget.repository!.requestResetCode(_emailController.text.trim()),
+      );
+      if (!success || !mounted) return;
+    }
+    if (_step == _ResetStep.password && widget.repository != null) {
+      final success = await _apiCubit.run(
+        () => widget.repository!.resetPassword(
+          email: _emailController.text.trim(),
+          code: _otpControllers.map((controller) => controller.text).join(),
+          newPassword: _passwordController.text,
+        ),
+      );
+      if (!success || !mounted) return;
+    }
+    setState(() => _step = _ResetStep.values[_step.index + 1]);
   }
 
   String get _title => switch (_step) {
@@ -77,83 +93,96 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
   };
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    backgroundColor: AppColors.loginBackground,
-    appBar: AppBar(
-      backgroundColor: Colors.transparent,
-      foregroundColor: AppColors.heading,
-      elevation: 0,
-      leading: IconButton(
-        tooltip: 'Kembali',
-        onPressed: () {
-          if (_step == _ResetStep.email) {
-            context.pop();
-          } else {
-            setState(() => _step = _ResetStep.values[_step.index - 1]);
-          }
-        },
-        icon: const Icon(Icons.arrow_back_rounded),
-      ),
-    ),
-    body: SafeArea(
-      top: false,
-      child: ResponsiveContent(
-        maxWidth: 560,
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final horizontal = constraints.maxWidth < 400 ? 18.0 : 32.0;
-            return SingleChildScrollView(
-              padding: EdgeInsets.fromLTRB(horizontal, 20, horizontal, 32),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    Icon(
-                      _step == _ResetStep.success
-                          ? Icons.check_circle_rounded
-                          : Icons.lock_reset_rounded,
-                      size: constraints.maxWidth < 360 ? 68 : 84,
-                      color: AppColors.primary,
-                    ),
-                    const SizedBox(height: 20),
-                    Text(
-                      _title,
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.headlineSmall
-                          ?.copyWith(
-                            color: AppColors.heading,
-                            fontWeight: FontWeight.w700,
-                          ),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      _description,
-                      textAlign: TextAlign.center,
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.textSecondary,
-                        height: 1.5,
-                      ),
-                    ),
-                    const SizedBox(height: 28),
-                    Card(
-                      elevation: 0,
-                      color: Colors.white,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: Padding(
-                        padding: EdgeInsets.all(
-                          constraints.maxWidth < 360 ? 18 : 24,
+  Widget build(BuildContext context) => BlocProvider.value(
+    value: _apiCubit,
+    child: BlocListener<ApiCubit<void>, ApiState<void>>(
+      listener: (context, state) {
+        if (state.status == ApiStatus.failure && state.message != null) {
+          ScaffoldMessenger.of(context)
+            ..hideCurrentSnackBar()
+            ..showSnackBar(SnackBar(content: Text(state.message!)));
+        }
+      },
+      child: Scaffold(
+        backgroundColor: AppColors.loginBackground,
+        appBar: AppBar(
+          backgroundColor: Colors.transparent,
+          foregroundColor: AppColors.heading,
+          elevation: 0,
+          leading: IconButton(
+            tooltip: 'Kembali',
+            onPressed: () {
+              if (_step == _ResetStep.email) {
+                context.pop();
+              } else {
+                setState(() => _step = _ResetStep.values[_step.index - 1]);
+              }
+            },
+            icon: const Icon(Icons.arrow_back_rounded),
+          ),
+        ),
+        body: SafeArea(
+          top: false,
+          child: ResponsiveContent(
+            maxWidth: 560,
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                final horizontal = constraints.maxWidth < 400 ? 18.0 : 32.0;
+                return SingleChildScrollView(
+                  padding: EdgeInsets.fromLTRB(horizontal, 20, horizontal, 32),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Icon(
+                          _step == _ResetStep.success
+                              ? Icons.check_circle_rounded
+                              : Icons.lock_reset_rounded,
+                          size: constraints.maxWidth < 360 ? 68 : 84,
+                          color: AppColors.primary,
                         ),
-                        child: _buildStep(),
-                      ),
+                        const SizedBox(height: 20),
+                        Text(
+                          _title,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.headlineSmall
+                              ?.copyWith(
+                                color: AppColors.heading,
+                                fontWeight: FontWeight.w700,
+                              ),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          _description,
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.bodyMedium
+                              ?.copyWith(
+                                color: AppColors.textSecondary,
+                                height: 1.5,
+                              ),
+                        ),
+                        const SizedBox(height: 28),
+                        Card(
+                          elevation: 0,
+                          color: Colors.white,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Padding(
+                            padding: EdgeInsets.all(
+                              constraints.maxWidth < 360 ? 18 : 24,
+                            ),
+                            child: _buildStep(),
+                          ),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              ),
-            );
-          },
+                  ),
+                );
+              },
+            ),
+          ),
         ),
       ),
     ),
@@ -183,7 +212,14 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
           },
         ),
         const SizedBox(height: 24),
-        AuthPrimaryButton(label: 'Kirim Kode', onPressed: _submit),
+        BlocBuilder<ApiCubit<void>, ApiState<void>>(
+          builder: (context, state) => AuthPrimaryButton(
+            label: state.status == ApiStatus.loading
+                ? 'Mengirim...'
+                : 'Kirim Kode',
+            onPressed: state.status == ApiStatus.loading ? null : _submit,
+          ),
+        ),
       ],
     ),
     _ResetStep.otp => Column(
@@ -228,11 +264,18 @@ class _ForgotPasswordPageState extends State<ForgotPasswordPage> {
         AuthPrimaryButton(label: 'Verifikasi', onPressed: _submit),
         const SizedBox(height: 10),
         TextButton(
-          onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Kode verifikasi telah dikirim ulang.'),
-            ),
-          ),
+          onPressed: () async {
+            final repository = widget.repository;
+            if (repository == null) return;
+            final success = await _apiCubit.run(
+              () => repository.requestResetCode(_emailController.text.trim()),
+            );
+            if (success && mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Kode verifikasi dikirim ulang.')),
+              );
+            }
+          },
           child: const Text('Kirim ulang kode'),
         ),
       ],
