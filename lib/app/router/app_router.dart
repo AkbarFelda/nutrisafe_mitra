@@ -11,12 +11,16 @@ import '../../features/auth/presentation/login_page.dart';
 import '../../features/auth/presentation/forgot_password_page.dart';
 import '../../features/auth/presentation/session_cubit.dart';
 import '../../features/auth/presentation/auth_cubit.dart';
+import '../../features/auth/data/password_repository.dart';
 import '../../features/food_report/domain/food_report.dart';
 import '../../features/food_report/presentation/food_report_history_page.dart';
 import '../../features/food_scan/presentation/food_scan_report_page.dart';
 import '../../features/partnership/presentation/partnership_status_page.dart';
 import '../../features/partnership/presentation/sppg_registration_page.dart';
+import '../../features/partnership/presentation/sppg_detail_page.dart';
 import '../../features/partnership/data/sppg_registration_repository.dart';
+import '../../features/partnership/data/sppg_dashboard_repository.dart';
+import '../../features/profile/data/profile_repository.dart';
 import '../../features/splash/presentation/splash_screen.dart';
 import '../../features/schools/presentation/school_list_page.dart';
 import '../../features/food_report/presentation/food_report_detail_page.dart';
@@ -57,6 +61,9 @@ GoRouter createRouter(
   SessionCubit session,
   SessionRefresh refresh, {
   AuthCubit? authCubit,
+  PasswordRepository? passwordRepository,
+  ProfileRepository? profileRepository,
+  SppgDashboardRepository? dashboardRepository,
   SppgRegistrationRepository? sppgRegistrationRepository,
 }) => GoRouter(
   initialLocation: '/splash',
@@ -79,7 +86,8 @@ GoRouter createRouter(
   routes: [
     GoRoute(
       path: '/students/allergies',
-      builder: (context, state) => const StudentAllergyMonitoringPage(),
+      builder: (context, state) =>
+          StudentAllergyMonitoringPage(repository: dashboardRepository),
     ),
     GoRoute(
       path: '/food-reports/issues',
@@ -87,11 +95,13 @@ GoRouter createRouter(
     ),
     GoRoute(
       path: '/schools',
-      builder: (context, state) => const SchoolListPage(),
+      builder: (context, state) =>
+          SchoolListPage(repository: dashboardRepository),
     ),
     GoRoute(
       path: '/food-reports/scan',
-      builder: (context, state) => const FoodScanReportPage(),
+      builder: (context, state) =>
+          FoodScanReportPage(repository: dashboardRepository),
     ),
     GoRoute(
       path: '/food-reports/history',
@@ -111,7 +121,8 @@ GoRouter createRouter(
     ),
     GoRoute(
       path: '/forgot-password',
-      builder: (context, state) => const ForgotPasswordPage(),
+      builder: (context, state) =>
+          ForgotPasswordPage(repository: passwordRepository),
     ),
     GoRoute(
       path: '/register',
@@ -122,7 +133,8 @@ GoRouter createRouter(
     ),
     GoRoute(
       path: '/partnership/status',
-      builder: (context, state) => const PartnershipStatusPage(),
+      builder: (context, state) =>
+          PartnershipStatusPage(repository: dashboardRepository),
     ),
     GoRoute(
       path: '/partnership/register',
@@ -130,8 +142,16 @@ GoRouter createRouter(
           SppgRegistrationPage(repository: sppgRegistrationRepository),
     ),
     GoRoute(
+      path: '/partnership/detail',
+      redirect: (context, state) =>
+          dashboardRepository == null ? '/partnership/status' : null,
+      builder: (context, state) =>
+          SppgDetailPage(repository: dashboardRepository!),
+    ),
+    GoRoute(
       path: '/profile/edit',
-      builder: (context, state) => const EditProfilePage(),
+      builder: (context, state) =>
+          EditProfilePage(repository: profileRepository),
     ),
     GoRoute(
       path: '/profile/help',
@@ -139,7 +159,8 @@ GoRouter createRouter(
     ),
     GoRoute(
       path: '/profile/change-password',
-      builder: (context, state) => const ChangePasswordPage(),
+      builder: (context, state) =>
+          ChangePasswordPage(repository: passwordRepository, session: session),
     ),
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) =>
@@ -162,8 +183,10 @@ GoRouter createRouter(
           routes: [
             GoRoute(
               path: '/profile',
-              builder: (context, state) =>
-                  ProfilePage(onLogout: authCubit?.logout),
+              builder: (context, state) => ProfilePage(
+                onLogout: authCubit?.logout,
+                repository: profileRepository,
+              ),
             ),
           ],
         ),
