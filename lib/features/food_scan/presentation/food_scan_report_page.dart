@@ -6,16 +6,12 @@ import 'package:image_picker/image_picker.dart';
 
 import '../../../app/theme/app_colors.dart';
 import '../../../core/widgets/responsive_content.dart';
-import '../../../core/error/app_failure.dart';
-import '../../partnership/data/sppg_dashboard_repository.dart';
 import 'widgets/food_scan_actions.dart';
 import 'widgets/food_scan_intro_card.dart';
 import 'widgets/menu_name_field.dart';
 
 class FoodScanReportPage extends StatefulWidget {
-  const FoodScanReportPage({super.key, this.repository});
-
-  final SppgDashboardRepository? repository;
+  const FoodScanReportPage({super.key});
 
   @override
   State<FoodScanReportPage> createState() => _FoodScanReportPageState();
@@ -96,39 +92,13 @@ class _FoodScanReportPageState extends State<FoodScanReportPage> {
     }
 
     setState(() => _isAnalyzing = true);
-    final repository = widget.repository;
-    ScanResult? scanResult;
-    if (repository != null) {
-      try {
-        scanResult = await repository.scanFood(imageBytes: _photoBytes!);
-      } catch (error) {
-        if (!mounted) return;
-        setState(() => _isAnalyzing = false);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(AppFailure.from(error).message)));
-        return;
-      }
-    } else {
-      await Future<void>.delayed(const Duration(milliseconds: 700));
-    }
+    await Future<void>.delayed(const Duration(milliseconds: 700));
     if (!mounted) return;
-    final payload = scanResult?.payload ?? const <String, dynamic>{};
-    final allergens = payload['allergens'];
-    final detectedAllergen =
-        payload['allergen']?.toString() ??
-        (allergens is List && allergens.isNotEmpty
-            ? allergens.first.toString()
-            : null);
-    final containsAllergen =
-        payload['contains_allergen'] == true ||
-        payload['is_safe'] == false ||
-        detectedAllergen != null;
     setState(() {
       _isAnalyzing = false;
       _hasAnalysis = true;
-      _containsAllergen = containsAllergen;
-      _detectedAllergen = detectedAllergen;
+      _containsAllergen = false;
+      _detectedAllergen = null;
       _usesRecommendation = false;
       _reportSent = false;
       _selectedRecommendation = null;

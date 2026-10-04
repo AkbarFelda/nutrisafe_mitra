@@ -100,8 +100,7 @@ GoRouter createRouter(
     ),
     GoRoute(
       path: '/food-reports/scan',
-      builder: (context, state) =>
-          FoodScanReportPage(repository: dashboardRepository),
+      builder: (context, state) => const FoodScanReportPage(),
     ),
     GoRoute(
       path: '/food-reports/history',

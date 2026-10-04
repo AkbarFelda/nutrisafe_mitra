@@ -231,37 +231,38 @@ class _SchoolSummary extends StatelessWidget {
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) {
       final scale = MediaQuery.textScalerOf(context).scale(13) / 13;
-      final width = constraints.maxWidth < 340 * scale
-          ? constraints.maxWidth
-          : (constraints.maxWidth - 16) / 2;
-      return Wrap(
-        spacing: 16,
-        runSpacing: 10,
-        children: [
-          SizedBox(
-            width: width,
-            child: _SummaryCard(
-              icon: '🏫',
-              title: 'Jumlah Sekolah',
-              value: schools.length,
-              unit: 'Sekolah',
-              color: const Color(0xFF76FFD7),
-            ),
-          ),
-          SizedBox(
-            width: width,
-            child: _SummaryCard(
-              icon: '👨‍🎓',
-              title: 'Total Siswa',
-              value: schools.fold<int>(
-                0,
-                (sum, school) => sum + school.students,
-              ),
-              unit: 'Siswa',
-              color: const Color(0xFFFFF9A0),
-            ),
-          ),
-        ],
+      final useSingleColumn = constraints.maxWidth < 340 * scale;
+      final schoolCard = _SummaryCard(
+        icon: '🏫',
+        title: 'Total Sekolah',
+        value: schools.length,
+        unit: 'Sekolah',
+        color: const Color(0xFF76FFD7),
+      );
+      final studentCard = _SummaryCard(
+        icon: '👨‍🎓',
+        title: 'Total Siswa',
+        value: schools.fold<int>(0, (sum, school) => sum + school.students),
+        unit: 'Siswa',
+        color: const Color(0xFFFFF9A0),
+      );
+
+      if (useSingleColumn) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [schoolCard, const SizedBox(height: 10), studentCard],
+        );
+      }
+
+      return IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(child: schoolCard),
+            const SizedBox(width: 16),
+            Expanded(child: studentCard),
+          ],
+        ),
       );
     },
   );

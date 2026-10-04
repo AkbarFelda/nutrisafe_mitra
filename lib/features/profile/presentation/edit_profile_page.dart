@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../app/theme/app_colors.dart';
 import '../../../core/presentation/api_cubit.dart';
 import '../data/profile_repository.dart';
 import '../data/sppg_profile.dart';
@@ -76,42 +75,6 @@ class _EditProfilePageState extends State<EditProfilePage> {
           key: _formKey,
           child: Column(
             children: [
-              Stack(
-                alignment: Alignment.bottomRight,
-                children: [
-                  const CircleAvatar(
-                    radius: 50,
-                    backgroundColor: AppColors.primary,
-                    child: Icon(
-                      Icons.person_rounded,
-                      color: Colors.white,
-                      size: 58,
-                    ),
-                  ),
-                  Material(
-                    color: AppColors.heading,
-                    shape: const CircleBorder(),
-                    child: IconButton(
-                      key: const Key('change-profile-photo'),
-                      tooltip: 'Ubah foto profil',
-                      onPressed: () => ScaffoldMessenger.of(context)
-                          .showSnackBar(
-                            const SnackBar(
-                              content: Text(
-                                'Pilih foto profil dari perangkat.',
-                              ),
-                            ),
-                          ),
-                      icon: const Icon(
-                        Icons.camera_alt_rounded,
-                        color: Colors.white,
-                        size: 20,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
               ProfileSectionCard(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
