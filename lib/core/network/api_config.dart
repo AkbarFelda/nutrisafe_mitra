@@ -1,6 +1,9 @@
 class ApiConfig {
   const ApiConfig({
-    this.baseUrl = const String.fromEnvironment('API_BASE_URL'),
+    this.baseUrl = const String.fromEnvironment(
+      'API_BASE_URL',
+      defaultValue: 'https://api.nutrisafe.id',
+    ),
   });
   final String baseUrl;
   bool get isConfigured {

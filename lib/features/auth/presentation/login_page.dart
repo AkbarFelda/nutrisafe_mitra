@@ -136,8 +136,8 @@ class _LoginPageState extends State<LoginPage> {
                       const SizedBox(height: 16),
 
                       AuthAccountPrompt(
-                        message: 'Belum Punya Akun? ',
-                        linkLabel: 'Daftar',
+                        message: 'Ingin bergabung? ',
+                        linkLabel: 'Daftar Jadi Mitra',
                         onTap: () => context.push('/register'),
                       ),
                     ],
