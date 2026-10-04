@@ -6,15 +6,30 @@ import '../../../app/theme/app_colors.dart';
 import '../../../core/constants/app_assets.dart';
 import '../../../core/widgets/app_icon.dart';
 import '../../../core/widgets/responsive_content.dart';
+import '../../../core/presentation/api_cubit.dart';
 import '../../auth/presentation/session_cubit.dart';
+import '../data/profile_repository.dart';
+import '../data/sppg_profile.dart';
 
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key, this.onLogout});
+  const ProfilePage({super.key, this.onLogout, this.repository});
 
   final VoidCallback? onLogout;
+  final ProfileRepository? repository;
 
   @override
-  Widget build(BuildContext context) => Scaffold(
+  Widget build(BuildContext context) {
+    final source = repository;
+    if (source == null) return _buildPage(context, null);
+    return BlocProvider(
+      create: (_) => ApiCubit<SppgProfile>()..run(source.getProfile),
+      child: BlocBuilder<ApiCubit<SppgProfile>, ApiState<SppgProfile>>(
+        builder: (context, state) => _buildPage(context, state.data),
+      ),
+    );
+  }
+
+  Widget _buildPage(BuildContext context, SppgProfile? profile) => Scaffold(
     backgroundColor: const Color(0xFFF7FAFC),
     appBar: AppBar(
       automaticallyImplyLeading: false,
@@ -35,7 +50,7 @@ class ProfilePage extends StatelessWidget {
           32,
         ),
         children: [
-          const _ProfileHeader(),
+          _ProfileHeader(profile: profile),
           const SizedBox(height: 28),
           _ProfileMenuTile(
             icon: AppIcon(AppAssets.buildingIcon, size: 24),
@@ -79,7 +94,8 @@ class ProfilePage extends StatelessWidget {
 }
 
 class _ProfileHeader extends StatelessWidget {
-  const _ProfileHeader();
+  const _ProfileHeader({this.profile});
+  final SppgProfile? profile;
 
   @override
   Widget build(BuildContext context) => Column(
@@ -106,13 +122,15 @@ class _ProfileHeader extends StatelessWidget {
       ),
       const SizedBox(height: 14),
       Text(
-        'Mitra SPPG',
+        profile?.name.isNotEmpty == true ? profile!.name : 'Mitra SPPG',
         style: Theme.of(context).textTheme.titleLarge
             ?.copyWith(fontWeight: FontWeight.w700),
       ),
       const SizedBox(height: 4),
       Text(
-        'Pengelola Program Makan Bergizi Gratis',
+        profile?.institutionName.isNotEmpty == true
+            ? profile!.institutionName
+            : 'Pengelola Program Makan Bergizi Gratis',
         textAlign: TextAlign.center,
         style: Theme.of(context).textTheme.bodySmall
             ?.copyWith(color: AppColors.textSecondary),
