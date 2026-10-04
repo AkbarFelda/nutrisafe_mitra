@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/widgets/app_icon.dart';
+import '../../data/sppg_dashboard_repository.dart';
 
 class SppgCard extends StatelessWidget {
-  const SppgCard({super.key, required this.onDetail});
+  const SppgCard({super.key, required this.onDetail, this.status});
   final VoidCallback onDetail;
+  final SppgStatus? status;
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -32,29 +34,29 @@ class SppgCard extends StatelessWidget {
 
           const SizedBox(width: 12),
 
-          const Expanded(
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'SPPG Indonesia',
+                  status?.name ?? 'SPPG Indonesia',
                   style: TextStyle(
                     fontSize: 13,
                     fontWeight: FontWeight.bold,
                     color: Colors.black87,
                   ),
                 ),
-                SizedBox(height: 4),
+                const SizedBox(height: 4),
                 Text(
-                  'Status: Aktif',
+                  'Status: ${status?.status ?? 'Aktif'}',
                   style: TextStyle(fontSize: 11, color: Colors.black87),
                 ),
                 Text(
-                  'Alamat: Jl. Indonesia',
+                  'Alamat: ${status?.address ?? 'Jl. Indonesia'}',
                   style: TextStyle(fontSize: 11, color: Colors.black87),
                 ),
                 Text(
-                  'Kapasitas: 100 Porsi',
+                  'Kapasitas: ${status?.capacity ?? 100} Porsi',
                   style: TextStyle(fontSize: 11, color: Colors.black87),
                 ),
               ],
