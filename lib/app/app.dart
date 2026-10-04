@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../features/auth/presentation/session_cubit.dart';
+import '../features/auth/presentation/auth_cubit.dart';
 import '../features/partnership/data/sppg_registration_repository.dart';
 import 'router/app_router.dart';
 import 'theme/app_theme.dart';
@@ -11,9 +12,11 @@ class MitraApp extends StatefulWidget {
   const MitraApp({
     super.key,
     required this.session,
+    this.authCubit,
     this.sppgRegistrationRepository,
   });
   final SessionCubit session;
+  final AuthCubit? authCubit;
   final SppgRegistrationRepository? sppgRegistrationRepository;
   @override
   State<MitraApp> createState() => _MitraAppState();
@@ -29,6 +32,7 @@ class _MitraAppState extends State<MitraApp> {
     _router = createRouter(
       widget.session,
       _refresh,
+      authCubit: widget.authCubit,
       sppgRegistrationRepository: widget.sppgRegistrationRepository,
     );
     WidgetsBinding.instance.addPostFrameCallback((_) {

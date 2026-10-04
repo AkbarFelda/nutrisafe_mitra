@@ -9,7 +9,9 @@ import '../../../core/widgets/responsive_content.dart';
 import '../../auth/presentation/session_cubit.dart';
 
 class ProfilePage extends StatelessWidget {
-  const ProfilePage({super.key});
+  const ProfilePage({super.key, this.onLogout});
+
+  final VoidCallback? onLogout;
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -58,7 +60,7 @@ class ProfilePage extends StatelessWidget {
           const SizedBox(height: 28),
           OutlinedButton.icon(
             key: const Key('profile-logout-button'),
-            onPressed: () => context.read<SessionCubit>().logout(),
+            onPressed: onLogout ?? () => context.read<SessionCubit>().logout(),
             icon: const Icon(Icons.logout_rounded),
             label: const Text('Keluar dari akun'),
             style: OutlinedButton.styleFrom(

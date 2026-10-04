@@ -10,6 +10,7 @@ import '../../features/food_issues/presentation/problematic_food_reports_page.da
 import '../../features/auth/presentation/login_page.dart';
 import '../../features/auth/presentation/forgot_password_page.dart';
 import '../../features/auth/presentation/session_cubit.dart';
+import '../../features/auth/presentation/auth_cubit.dart';
 import '../../features/food_report/domain/food_report.dart';
 import '../../features/food_report/presentation/food_report_history_page.dart';
 import '../../features/food_scan/presentation/food_scan_report_page.dart';
@@ -55,6 +56,7 @@ class SessionRefresh extends ChangeNotifier {
 GoRouter createRouter(
   SessionCubit session,
   SessionRefresh refresh, {
+  AuthCubit? authCubit,
   SppgRegistrationRepository? sppgRegistrationRepository,
 }) => GoRouter(
   initialLocation: '/splash',
@@ -103,7 +105,10 @@ GoRouter createRouter(
           FoodReportDetailPage(report: state.extra! as FoodReport),
     ),
     GoRoute(path: '/splash', builder: (context, state) => const SplashScreen()),
-    GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
+    GoRoute(
+      path: '/login',
+      builder: (context, state) => LoginPage(authCubit: authCubit),
+    ),
     GoRoute(
       path: '/forgot-password',
       builder: (context, state) => const ForgotPasswordPage(),
@@ -157,7 +162,8 @@ GoRouter createRouter(
           routes: [
             GoRoute(
               path: '/profile',
-              builder: (context, state) => const ProfilePage(),
+              builder: (context, state) =>
+                  ProfilePage(onLogout: authCubit?.logout),
             ),
           ],
         ),

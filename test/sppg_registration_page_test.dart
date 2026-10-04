@@ -15,6 +15,27 @@ class EmptyPicker implements RegistrationAttachmentPicker {
 }
 
 void main() {
+  testWidgets('success dialog matches design and confirms explicitly', (
+    tester,
+  ) async {
+    var confirmed = false;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: SppgRegistrationSuccessDialog(
+            onConfirmed: () => confirmed = true,
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('Pendaftaran Berhasil!'), findsOneWidget);
+    expect(find.text('Silahkan tunggu email konfirmasi'), findsOneWidget);
+    expect(find.byIcon(Icons.check_rounded), findsOneWidget);
+    await tester.tap(find.byKey(const Key('registration-success-ok')));
+    expect(confirmed, isTrue);
+  });
+
   testWidgets(
     'form validates required fields and accepts optional institution',
     (tester) async {

@@ -61,12 +61,11 @@ void main() {
     await tester.pump(const Duration(seconds: 1));
     await tester.pumpAndSettle();
     expect(find.text('Masuk Akun'), findsOneWidget);
-    await tester.ensureVisible(find.text('Daftar'));
-    await tester.tap(find.text('Daftar'));
+    await tester.ensureVisible(find.text('Daftar Jadi Mitra'));
+    await tester.tap(find.text('Daftar Jadi Mitra'));
     await tester.pumpAndSettle();
-    expect(find.text('Daftar Akun'), findsOneWidget);
-    await tester.ensureVisible(find.text('Masuk'));
-    await tester.tap(find.text('Masuk'));
+    expect(find.text('Daftar Jadi Mitra SPPG'), findsOneWidget);
+    await tester.tap(find.byTooltip('Kembali'));
     await tester.pumpAndSettle();
     expect(find.text('Masuk Akun'), findsOneWidget);
     final context = tester.element(find.text('Masuk Akun'));

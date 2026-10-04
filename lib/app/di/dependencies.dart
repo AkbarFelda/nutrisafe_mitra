@@ -6,6 +6,8 @@ import '../../core/network/api_config.dart';
 import '../../core/network/dio_factory.dart';
 import '../../core/storage/token_store.dart';
 import '../../features/auth/data/session_repository.dart';
+import '../../features/auth/data/auth_repository.dart';
+import '../../features/auth/presentation/auth_cubit.dart';
 import '../../features/auth/presentation/session_cubit.dart';
 import '../../features/partnership/data/sppg_registration_repository.dart';
 
@@ -30,6 +32,11 @@ GetIt configureDependencies({
       onUnauthorized: di<SessionCubit>().invalidate,
     ),
     dispose: (dio) => dio.close(force: true),
+  );
+  di.registerLazySingleton(() => AuthRepository(di<Dio>()));
+  di.registerLazySingleton(
+    () => AuthCubit(di<AuthRepository>(), di<SessionCubit>()),
+    dispose: (cubit) => cubit.close(),
   );
   di.registerLazySingleton(() => SppgRegistrationRepository(di<Dio>()));
   return di;

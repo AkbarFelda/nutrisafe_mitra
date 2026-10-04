@@ -4,6 +4,16 @@ import 'package:nutrisafe_mitra/app/theme/app_theme.dart';
 import 'package:nutrisafe_mitra/features/auth/presentation/login_page.dart';
 
 void main() {
+  testWidgets('validates empty login fields', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(theme: AppTheme.light, home: const LoginPage()),
+    );
+    await tester.tap(find.text('Masuk'));
+    await tester.pump();
+    expect(find.text('Email wajib diisi.'), findsOneWidget);
+    expect(find.text('Password wajib diisi.'), findsOneWidget);
+  });
+
   testWidgets('password visibility toggles without losing entered text', (
     tester,
   ) async {

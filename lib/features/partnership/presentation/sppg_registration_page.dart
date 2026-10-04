@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../app/theme/app_colors.dart';
 import '../data/registration_attachment_picker.dart';
@@ -115,22 +116,33 @@ class _SppgRegistrationPageState extends State<SppgRegistrationPage> {
       create: (_) => SppgRegistrationCubit(repository),
       child: BlocConsumer<SppgRegistrationCubit, SppgRegistrationState>(
         listener: (context, state) {
+          if (state.status == SppgRegistrationStatus.success) {
+            _showSuccessDialog(context);
+            return;
+          }
           final message = state.message;
-          if (message == null) return;
+          if (state.status != SppgRegistrationStatus.failure ||
+              message == null) {
+            return;
+          }
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
-            ..showSnackBar(
-              SnackBar(
-                content: Text(message),
-                backgroundColor: state.status == SppgRegistrationStatus.success
-                    ? Colors.green.shade700
-                    : null,
-              ),
-            );
+            ..showSnackBar(SnackBar(content: Text(message)));
         },
         builder: _buildScaffold,
       ),
     );
+  }
+
+  Future<void> _showSuccessDialog(BuildContext pageContext) async {
+    await showDialog<void>(
+      context: pageContext,
+      barrierDismissible: false,
+      builder: (dialogContext) => SppgRegistrationSuccessDialog(
+        onConfirmed: () => Navigator.of(dialogContext).pop(),
+      ),
+    );
+    if (mounted) context.go(widget.fallbackRoute);
   }
 
   Widget _buildScaffold(
@@ -293,6 +305,75 @@ class _SppgRegistrationPageState extends State<SppgRegistrationPage> {
               ),
             ),
           ),
+        ),
+      ),
+    ),
+  );
+}
+
+class SppgRegistrationSuccessDialog extends StatelessWidget {
+  const SppgRegistrationSuccessDialog({super.key, required this.onConfirmed});
+
+  final VoidCallback onConfirmed;
+
+  @override
+  Widget build(BuildContext context) => Dialog(
+    backgroundColor: const Color(0xFFF3F3F3),
+    insetPadding: const EdgeInsets.symmetric(horizontal: 32),
+    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+    child: ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: 360),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(28, 24, 28, 16),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 46,
+              height: 46,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: const Color(0xFF009C25), width: 2),
+              ),
+              child: const Icon(
+                Icons.check_rounded,
+                color: Color(0xFF009C25),
+                size: 27,
+              ),
+            ),
+            const SizedBox(height: 18),
+            const Text(
+              'Pendaftaran Berhasil!',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+            ),
+            const SizedBox(height: 6),
+            const Text(
+              'Silahkan tunggu email konfirmasi',
+              textAlign: TextAlign.center,
+              style: TextStyle(fontSize: 13),
+            ),
+            const SizedBox(height: 22),
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: FilledButton(
+                key: const Key('registration-success-ok'),
+                onPressed: onConfirmed,
+                style: FilledButton.styleFrom(
+                  backgroundColor: const Color(0xFF00A824),
+                  foregroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(9),
+                  ),
+                ),
+                child: const Text(
+                  'OK',
+                  style: TextStyle(fontWeight: FontWeight.w700),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     ),
