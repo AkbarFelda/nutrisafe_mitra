@@ -3,7 +3,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:nutrisafe_mitra/app/theme/app_theme.dart';
 import 'package:nutrisafe_mitra/features/auth/presentation/login_page.dart';
 import 'package:nutrisafe_mitra/features/auth/presentation/forgot_password_page.dart';
-import 'package:nutrisafe_mitra/features/auth/presentation/register_page.dart';
 import 'package:nutrisafe_mitra/features/food_scan/presentation/food_scan_report_page.dart';
 import 'package:nutrisafe_mitra/features/home/presentation/home_page.dart';
 import 'package:nutrisafe_mitra/features/partnership/presentation/partnership_status_page.dart';
@@ -15,7 +14,6 @@ import 'package:nutrisafe_mitra/features/profile/presentation/help_page.dart';
 void main() {
   const pages = <String, Widget>{
     'login': LoginPage(),
-    'register': RegisterPage(),
     'forgot password': ForgotPasswordPage(),
     'partnership': PartnershipStatusPage(),
     'SPPG form': SppgRegistrationPage(),

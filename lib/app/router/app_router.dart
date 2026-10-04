@@ -9,7 +9,6 @@ import '../../features/food_issues/presentation/problematic_food_reports_page.da
 
 import '../../features/auth/presentation/login_page.dart';
 import '../../features/auth/presentation/forgot_password_page.dart';
-import '../../features/auth/presentation/register_page.dart';
 import '../../features/auth/presentation/session_cubit.dart';
 import '../../features/food_report/domain/food_report.dart';
 import '../../features/food_report/presentation/food_report_history_page.dart';
@@ -111,7 +110,10 @@ GoRouter createRouter(
     ),
     GoRoute(
       path: '/register',
-      builder: (context, state) => const RegisterPage(),
+      builder: (context, state) => SppgRegistrationPage(
+        repository: sppgRegistrationRepository,
+        fallbackRoute: '/login',
+      ),
     ),
     GoRoute(
       path: '/partnership/status',

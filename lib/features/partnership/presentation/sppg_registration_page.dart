@@ -17,9 +17,11 @@ class SppgRegistrationPage extends StatefulWidget {
     super.key,
     this.attachmentPicker,
     this.repository,
+    this.fallbackRoute = '/partnership/status',
   });
   final RegistrationAttachmentPicker? attachmentPicker;
   final SppgRegistrationRepository? repository;
+  final String fallbackRoute;
 
   @override
   State<SppgRegistrationPage> createState() => _SppgRegistrationPageState();
@@ -136,9 +138,9 @@ class _SppgRegistrationPageState extends State<SppgRegistrationPage> {
     SppgRegistrationState registrationState,
   ) => Scaffold(
     backgroundColor: AppColors.loginBackground,
-    appBar: const PartnershipAppBar(
-      title: 'Pendaftaran Mitra SPPG Baru',
-      fallbackRoute: '/partnership/status',
+    appBar: PartnershipAppBar(
+      title: 'Daftar Jadi Mitra SPPG',
+      fallbackRoute: widget.fallbackRoute,
     ),
     body: SafeArea(
       top: false,
