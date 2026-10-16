@@ -8,6 +8,7 @@ import 'features/auth/data/password_repository.dart';
 import 'features/partnership/data/sppg_registration_repository.dart';
 import 'features/partnership/data/sppg_dashboard_repository.dart';
 import 'features/profile/data/profile_repository.dart';
+import 'features/notifications/data/notification_repository.dart';
 
 void main() {
   final dependencies = configureDependencies();
@@ -19,6 +20,7 @@ void main() {
       profileRepository: dependencies<ProfileRepository>(),
       dashboardRepository: dependencies<SppgDashboardRepository>(),
       sppgRegistrationRepository: dependencies<SppgRegistrationRepository>(),
+      notificationRepository: dependencies<NotificationRepository>(),
     ),
   );
 }

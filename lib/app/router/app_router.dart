@@ -26,6 +26,7 @@ import '../../features/schools/presentation/school_list_page.dart';
 import '../../features/food_report/presentation/food_report_detail_page.dart';
 import '../../features/home/presentation/home_page.dart';
 import '../../features/notifications/presentation/notification_page.dart';
+import '../../features/notifications/data/notification_repository.dart';
 import '../../features/profile/presentation/profile_page.dart';
 import '../../features/profile/presentation/edit_profile_page.dart';
 import '../../features/profile/presentation/help_page.dart';
@@ -65,6 +66,7 @@ GoRouter createRouter(
   ProfileRepository? profileRepository,
   SppgDashboardRepository? dashboardRepository,
   SppgRegistrationRepository? sppgRegistrationRepository,
+  NotificationRepository? notificationRepository,
 }) => GoRouter(
   initialLocation: '/splash',
   refreshListenable: refresh,
@@ -91,7 +93,9 @@ GoRouter createRouter(
     ),
     GoRoute(
       path: '/food-reports/issues',
-      builder: (context, state) => const ProblematicFoodReportsPage(),
+      builder: (context, state) => ProblematicFoodReportsPage(
+        repository: dashboardRepository,
+      ),
     ),
     GoRoute(
       path: '/schools',
@@ -100,11 +104,14 @@ GoRouter createRouter(
     ),
     GoRoute(
       path: '/food-reports/scan',
-      builder: (context, state) => const FoodScanReportPage(),
+      builder: (context, state) =>
+          FoodScanReportPage(repository: dashboardRepository),
     ),
     GoRoute(
       path: '/food-reports/history',
-      builder: (context, state) => const FoodReportHistoryPage(),
+      builder: (context, state) => FoodReportHistoryPage(
+        repository: dashboardRepository,
+      ),
     ),
     GoRoute(
       path: '/food-reports/detail',
@@ -169,7 +176,9 @@ GoRouter createRouter(
           routes: [
             GoRoute(
               path: '/notifications',
-              builder: (context, state) => const NotificationPage(),
+              builder: (context, state) => NotificationPage(
+                repository: notificationRepository,
+              ),
             ),
           ],
         ),

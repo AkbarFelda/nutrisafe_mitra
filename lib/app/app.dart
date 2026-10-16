@@ -8,6 +8,7 @@ import '../features/auth/data/password_repository.dart';
 import '../features/partnership/data/sppg_registration_repository.dart';
 import '../features/partnership/data/sppg_dashboard_repository.dart';
 import '../features/profile/data/profile_repository.dart';
+import '../features/notifications/data/notification_repository.dart';
 import 'router/app_router.dart';
 import 'theme/app_theme.dart';
 
@@ -20,6 +21,7 @@ class MitraApp extends StatefulWidget {
     this.profileRepository,
     this.dashboardRepository,
     this.sppgRegistrationRepository,
+    this.notificationRepository,
   });
   final SessionCubit session;
   final AuthCubit? authCubit;
@@ -27,6 +29,7 @@ class MitraApp extends StatefulWidget {
   final ProfileRepository? profileRepository;
   final SppgDashboardRepository? dashboardRepository;
   final SppgRegistrationRepository? sppgRegistrationRepository;
+  final NotificationRepository? notificationRepository;
   @override
   State<MitraApp> createState() => _MitraAppState();
 }
@@ -46,6 +49,7 @@ class _MitraAppState extends State<MitraApp> {
       profileRepository: widget.profileRepository,
       dashboardRepository: widget.dashboardRepository,
       sppgRegistrationRepository: widget.sppgRegistrationRepository,
+      notificationRepository: widget.notificationRepository,
     );
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted) _refresh.startSplash();
