@@ -1,7 +1,5 @@
 import '../../../core/storage/token_store.dart';
 
-/// Local session boundary. Future backend authentication supplies a token only
-/// after confirming Mitra/SPPG access. No API payload is assumed here.
 class SessionRepository {
   SessionRepository(this._store);
   final TokenStore _store;

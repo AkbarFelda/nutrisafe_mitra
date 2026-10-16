@@ -4,6 +4,7 @@ enum FailureKind {
   network,
   timeout,
   unauthorized,
+  invalidCredentials,
   server,
   unexpected,
   configuration,
@@ -11,18 +12,22 @@ enum FailureKind {
 }
 
 class AppFailure implements Exception {
-  const AppFailure(this.kind, {this.cause});
+  const AppFailure(this.kind, {this.cause, this.messageOverride});
   final FailureKind kind;
   final Object? cause;
-  String get message => switch (kind) {
-    FailureKind.network => 'Periksa koneksi internet Anda.',
-    FailureKind.timeout => 'Permintaan terlalu lama. Coba lagi.',
-    FailureKind.unauthorized => 'Sesi berakhir. Silakan masuk kembali.',
-    FailureKind.server => 'Layanan sedang bermasalah. Coba lagi nanti.',
-    FailureKind.configuration => 'Layanan belum tersedia.',
-    FailureKind.storage => 'Sesi tidak dapat disimpan atau dibaca.',
-    FailureKind.unexpected => 'Terjadi kesalahan. Silakan coba lagi.',
-  };
+  final String? messageOverride;
+  String get message =>
+      messageOverride ??
+      switch (kind) {
+        FailureKind.network => 'Periksa koneksi internet Anda.',
+        FailureKind.timeout => 'Permintaan terlalu lama. Coba lagi.',
+        FailureKind.unauthorized => 'Sesi berakhir. Silakan masuk kembali.',
+        FailureKind.invalidCredentials => 'Email atau kata sandi tidak sesuai.',
+        FailureKind.server => 'Layanan sedang bermasalah. Coba lagi nanti.',
+        FailureKind.configuration => 'Layanan belum tersedia.',
+        FailureKind.storage => 'Sesi tidak dapat disimpan atau dibaca.',
+        FailureKind.unexpected => 'Terjadi kesalahan. Silakan coba lagi.',
+      };
   static AppFailure from(Object error) {
     if (error is AppFailure) return error;
     if (error is DioException) {
