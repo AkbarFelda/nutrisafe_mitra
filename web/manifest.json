@@ -1,11 +1,11 @@
 {
-    "name": "nutrisafe_mitra",
-    "short_name": "nutrisafe_mitra",
+    "name": "NutriSafe Mitra",
+    "short_name": "NutriSafe",
     "start_url": ".",
     "display": "standalone",
-    "background_color": "#0175C2",
-    "theme_color": "#0175C2",
-    "description": "A new Flutter project.",
+    "background_color": "#F3FAFF",
+    "theme_color": "#0D77BD",
+    "description": "Aplikasi mitra SPPG NutriSafe.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
