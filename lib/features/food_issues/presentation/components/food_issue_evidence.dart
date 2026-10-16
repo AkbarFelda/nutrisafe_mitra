@@ -73,14 +73,19 @@ class FoodIssueEvidence extends StatelessWidget {
             ],
           ),
   );
-  Widget _photo(String url, {BoxFit fit = BoxFit.cover}) => Image.network(
-    url,
-    fit: fit,
-    errorBuilder: (_, error, stackTrace) => const Center(
+  Widget _photo(String url, {BoxFit fit = BoxFit.cover}) {
+    Widget errorBuilder(
+      BuildContext context,
+      Object error,
+      StackTrace? stackTrace,
+    ) => const Center(
       child: Text(
         'Foto tidak dapat dimuat',
         style: TextStyle(color: AppColors.textSecondary),
       ),
-    ),
-  );
+    );
+    return url.startsWith('assets/')
+        ? Image.asset(url, fit: fit, errorBuilder: errorBuilder)
+        : Image.network(url, fit: fit, errorBuilder: errorBuilder);
+  }
 }

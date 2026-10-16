@@ -25,8 +25,11 @@ void main() {
     expect(find.text('Budi Santoso'), findsOneWidget);
     expect(find.text('22 Maret 2026 \u2022 12.15'), findsOneWidget);
     expect(find.text('Sayur capcay'), findsOneWidget);
-    await tester.scrollUntilVisible(find.text('Belum ada bukti foto'), 150);
-    expect(find.text('Belum ada bukti foto'), findsOneWidget);
+    await tester.scrollUntilVisible(
+      find.text('Ketuk foto untuk memperbesar'),
+      150,
+    );
+    expect(find.byType(Image), findsWidgets);
     await tester.pageBack();
     await tester.pumpAndSettle();
     expect(find.text('Makanan berbau tidak sedap'), findsOneWidget);
@@ -36,6 +39,10 @@ void main() {
   testWidgets('empty input does not display demo reports', (tester) async {
     await tester.pumpWidget(app(reports: []));
     expect(find.text('Belum ada laporan makanan bermasalah'), findsOneWidget);
+    expect(
+      find.text('Laporan dari sekolah akan muncul di halaman ini.'),
+      findsOneWidget,
+    );
     expect(find.text('LM-003'), findsNothing);
   });
 

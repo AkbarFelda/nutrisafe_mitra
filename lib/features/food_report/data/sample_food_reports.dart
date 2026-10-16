@@ -12,6 +12,7 @@ final sampleFoodReports = List<FoodReport>.unmodifiable([
       studentsWithAllergies: 9,
       allergies: _sampleAllergies,
       menuItems: _sampleMenuItems(196),
+      documentationPhotos: const ['assets/images/dummy_stale_capcay.png'],
     ),
     FoodReport(
       date: DateTime(2026, 3, day),
@@ -23,6 +24,7 @@ final sampleFoodReports = List<FoodReport>.unmodifiable([
       studentsWithAllergies: 9,
       allergies: _sampleAllergies,
       menuItems: _sampleMenuItems(360),
+      documentationPhotos: const ['assets/images/dummy_open_package.png'],
     ),
   ],
 ]);

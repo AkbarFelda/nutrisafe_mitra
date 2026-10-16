@@ -11,6 +11,7 @@ final sampleFoodIssues = List<FoodIssue>.unmodifiable([
     description: 'Beberapa kemasan makanan terbuka saat diterima sekolah.',
     affectedPortions: 12,
     status: FoodIssueStatus.pending,
+    photoUrls: ['assets/images/dummy_open_package.png'],
   ),
   FoodIssue(
     id: 'LM-002',
@@ -23,6 +24,7 @@ final sampleFoodIssues = List<FoodIssue>.unmodifiable([
         'Makanan dilaporkan berbau tidak seperti biasanya saat pembagian.',
     affectedPortions: 8,
     status: FoodIssueStatus.inProgress,
+    photoUrls: ['assets/images/dummy_stale_capcay.png'],
   ),
   FoodIssue(
     id: 'LM-001',
@@ -34,5 +36,6 @@ final sampleFoodIssues = List<FoodIssue>.unmodifiable([
     description: 'Kemasan bocor. Porsi pengganti sudah diterima pihak sekolah.',
     affectedPortions: 4,
     status: FoodIssueStatus.resolved,
+    photoUrls: ['assets/images/dummy_leaking_milk.png'],
   ),
 ]);

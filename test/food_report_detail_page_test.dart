@@ -29,6 +29,7 @@ void main() {
             portions: 57,
           ),
         ],
+        documentationPhotos: const ['assets/images/dummy_stale_capcay.png'],
       );
       await tester.pumpWidget(app(report));
       expect(find.text('Menunggu'), findsOneWidget);
@@ -40,6 +41,8 @@ void main() {
       expect(find.text('57 Porsi'), findsOneWidget);
       expect(find.text('Nasi Putih'), findsNothing);
       expect(find.text('Diterima'), findsNothing);
+      await tester.ensureVisible(find.text('Foto Dokumentasi'));
+      expect(find.byType(Image), findsOneWidget);
     },
   );
 
