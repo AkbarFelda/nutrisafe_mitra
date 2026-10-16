@@ -30,6 +30,7 @@ class _AuthPasswordFieldState extends State<AuthPasswordField> {
     autofillHints: widget.autofillHints,
     decoration: InputDecoration(
       hintText: widget.hintText,
+      errorMaxLines: 3,
       suffixIcon: widget.allowReveal
           ? IconButton(
               tooltip: _obscure ? 'Tampilkan password' : 'Sembunyikan password',

@@ -2,6 +2,7 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:nutrisafe_mitra/core/error/app_failure.dart';
 import 'package:nutrisafe_mitra/core/network/api_config.dart';
 import 'package:nutrisafe_mitra/core/network/dio_factory.dart';
 import 'package:nutrisafe_mitra/features/auth/data/auth_repository.dart';
@@ -52,18 +53,47 @@ void main() {
     final repository = AuthRepository(dio);
 
     token = await repository.login(
-      const LoginCredentials(email: 'sarah@spgg.id', password: 'password123'),
+      const LoginCredentials(email: 'sarah@sppg.id', password: 'password123'),
     );
     expect(token, 'api-token');
     expect(adapter.requests.first.path, '/login');
     expect(adapter.requests.first.headers['Authorization'], isNull);
     expect(adapter.requests.first.data, {
-      'email': 'sarah@spgg.id',
+      'email': 'sarah@sppg.id',
       'password': 'password123',
     });
 
     await repository.logout();
     expect(adapter.requests.last.path, '/logout');
     expect(adapter.requests.last.headers['Authorization'], 'Bearer api-token');
+  });
+
+  test('login rejects non-SPPG email before calling the API', () async {
+    final dio = createDio(
+      config: const ApiConfig(baseUrl: 'https://api.nutrisafe.id'),
+      token: () => null,
+      onUnauthorized: (_) async {},
+    );
+    addTearDown(() => dio.close());
+    final adapter = _AuthAdapter();
+    dio.httpClientAdapter = adapter;
+    final repository = AuthRepository(dio);
+
+    await expectLater(
+      repository.login(
+        const LoginCredentials(
+          email: 'sekolah@example.sch.id',
+          password: 'password123',
+        ),
+      ),
+      throwsA(
+        isA<AppFailure>().having(
+          (failure) => failure.message,
+          'message',
+          'Gunakan email mitra dengan domain @sppg.id.',
+        ),
+      ),
+    );
+    expect(adapter.requests, isEmpty);
   });
 }

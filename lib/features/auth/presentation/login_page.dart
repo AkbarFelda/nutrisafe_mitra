@@ -7,6 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:nutrisafe_mitra/app/theme/app_colors.dart';
 
+import '../data/auth_repository.dart';
 import 'auth_cubit.dart';
 import 'widgets/auth_header.dart';
 import 'widgets/auth_form_card.dart';
@@ -71,111 +72,116 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _buildScaffold(
-    BuildContext context,
-    AuthActionState authState,
-  ) => Scaffold(
-    backgroundColor: AppColors.loginBackground,
-    body: SafeArea(
-      child: ResponsiveContent(
-        maxWidth: 600,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const AuthHeader(),
-              const SizedBox(height: 36),
+  Widget _buildScaffold(BuildContext context, AuthActionState authState) =>
+      Scaffold(
+        backgroundColor: AppColors.loginBackground,
+        body: SafeArea(
+          child: ResponsiveContent(
+            maxWidth: 600,
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  const AuthHeader(),
+                  const SizedBox(height: 36),
 
-              const Text(
-                'Masuk Akun',
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: AppColors.heading,
-                ),
-              ),
-              const SizedBox(height: 24),
-
-              AuthFormCard(
-                child: Form(
-                  key: _formKey,
-                  autovalidateMode: _submitted
-                      ? AutovalidateMode.onUserInteraction
-                      : AutovalidateMode.disabled,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const AuthFieldLabel(
-                        text: 'Email',
-                        icon: AppAssets.emailIcon,
-                        color: AppColors.emailIcon,
-                        spacing: 8,
-                      ),
-                      TextFormField(
-                        controller: _emailController,
-                        keyboardType: TextInputType.emailAddress,
-                        textInputAction: TextInputAction.next,
-                        autofillHints: const [AutofillHints.username],
-                        autocorrect: false,
-                        decoration: const InputDecoration(hintText: 'Email'),
-                        validator: (value) {
-                          final email = value?.trim() ?? '';
-                          if (email.isEmpty) return 'Email wajib diisi.';
-                          return RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$')
-                                  .hasMatch(email)
-                              ? null
-                              : 'Format email tidak valid.';
-                        },
-                      ),
-                      const SizedBox(height: 16),
-
-                      const AuthFieldLabel(
-                        text: 'Password',
-                        icon: AppAssets.passwordIcon,
-                        color: AppColors.passwordIcon,
-                        spacing: 8,
-                      ),
-                      AuthPasswordField(
-                        controller: _passwordController,
-                        hintText: 'Password',
-                        autofillHints: const [AutofillHints.password],
-                        validator: (value) => value == null || value.isEmpty
-                            ? 'Password wajib diisi.'
-                            : null,
-                      ),
-                      const SizedBox(height: 8),
-                      Align(
-                        alignment: Alignment.centerRight,
-                        child: AuthTextLink(
-                          label: 'Lupa password?',
-                          onTap: () => context.push('/forgot-password'),
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-
-                      AuthPrimaryButton(
-                        label: authState.status == AuthActionStatus.loading
-                            ? 'Memproses...'
-                            : 'Masuk',
-                        onPressed: authState.status == AuthActionStatus.loading
-                            ? null
-                            : _login,
-                      ),
-                      const SizedBox(height: 16),
-
-                      AuthAccountPrompt(
-                        message: 'Ingin bergabung? ',
-                        linkLabel: 'Daftar Jadi Mitra',
-                        onTap: () => context.push('/register'),
-                      ),
-                    ],
+                  const Text(
+                    'Masuk Akun',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.heading,
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 24),
+
+                  AuthFormCard(
+                    child: Form(
+                      key: _formKey,
+                      autovalidateMode: _submitted
+                          ? AutovalidateMode.onUserInteraction
+                          : AutovalidateMode.disabled,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const AuthFieldLabel(
+                            text: 'Email',
+                            icon: AppAssets.emailIcon,
+                            color: AppColors.emailIcon,
+                            spacing: 8,
+                          ),
+                          TextFormField(
+                            controller: _emailController,
+                            keyboardType: TextInputType.emailAddress,
+                            textInputAction: TextInputAction.next,
+                            autofillHints: const [AutofillHints.username],
+                            autocorrect: false,
+                            decoration: const InputDecoration(
+                              hintText: 'Email',
+                              errorMaxLines: 3,
+                            ),
+                            validator: (value) {
+                              final email = value?.trim() ?? '';
+                              if (email.isEmpty) return 'Email wajib diisi.';
+                              if (!RegExp(r'^[^\s@]+@[^\s@]+\.[^\s@]+$')
+                                  .hasMatch(email)) {
+                                return 'Format email tidak valid.';
+                              }
+                              return isSppgEmail(email)
+                                  ? null
+                                  : 'Gunakan email dengan domain @sppg.id.';
+                            },
+                          ),
+                          const SizedBox(height: 16),
+
+                          const AuthFieldLabel(
+                            text: 'Password',
+                            icon: AppAssets.passwordIcon,
+                            color: AppColors.passwordIcon,
+                            spacing: 8,
+                          ),
+                          AuthPasswordField(
+                            controller: _passwordController,
+                            hintText: 'Password',
+                            autofillHints: const [AutofillHints.password],
+                            validator: (value) => value == null || value.isEmpty
+                                ? 'Password wajib diisi.'
+                                : null,
+                          ),
+                          const SizedBox(height: 8),
+                          Align(
+                            alignment: Alignment.centerRight,
+                            child: AuthTextLink(
+                              label: 'Lupa password?',
+                              onTap: () => context.push('/forgot-password'),
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+
+                          AuthPrimaryButton(
+                            label: authState.status == AuthActionStatus.loading
+                                ? 'Memproses...'
+                                : 'Masuk',
+                            onPressed:
+                                authState.status == AuthActionStatus.loading
+                                ? null
+                                : _login,
+                          ),
+                          const SizedBox(height: 16),
+
+                          AuthAccountPrompt(
+                            message: 'Ingin bergabung? ',
+                            linkLabel: 'Daftar Jadi Mitra',
+                            onTap: () => context.push('/register'),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                ],
               ),
-              const SizedBox(height: 32),
-            ],
+            ),
           ),
         ),
-      ),
-    ),
-  );
+      );
 }

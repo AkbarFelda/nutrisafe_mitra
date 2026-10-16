@@ -2,6 +2,9 @@ import 'package:dio/dio.dart';
 
 import '../../../core/error/app_failure.dart';
 
+bool isSppgEmail(String email) =>
+    email.trim().toLowerCase().endsWith('@sppg.id');
+
 class LoginCredentials {
   const LoginCredentials({required this.email, required this.password});
 
@@ -15,6 +18,12 @@ class AuthRepository {
   final Dio _dio;
 
   Future<String> login(LoginCredentials credentials) async {
+    if (!isSppgEmail(credentials.email)) {
+      throw const AppFailure(
+        FailureKind.invalidCredentials,
+        messageOverride: 'Gunakan email mitra dengan domain @sppg.id.',
+      );
+    }
     try {
       final response = await _dio.post<Object?>(
         '/login',
