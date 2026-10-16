@@ -11,34 +11,42 @@ class AllergySummary extends StatelessWidget {
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) {
       final scale = MediaQuery.textScalerOf(context).scale(14) / 14;
-      final width = constraints.maxWidth < 330 * scale
-          ? constraints.maxWidth
-          : (constraints.maxWidth - 12) / 2;
-      return Wrap(
-        spacing: 12,
-        runSpacing: 12,
-        children: [
-          SizedBox(
-            width: width,
-            child: _Metric(
-              title: 'Jenis Alergi',
-              value: data.types.length,
-              unit: 'jenis alergi',
-              icon: AppAssets.allergymonitoringIcon,
-              color: const Color(0xFFFF777B),
-            ),
-          ),
-          SizedBox(
-            width: width,
-            child: _Metric(
-              title: 'Total Siswa Alergi',
-              value: data.allergicStudents,
-              unit: 'siswa',
-              icon: AppAssets.manstudentIcon,
-              color: const Color(0xFFFFB58F),
-            ),
-          ),
-        ],
+      final useSingleColumn = constraints.maxWidth < 330 * scale;
+      final allergyTypeCard = _Metric(
+        title: 'Jenis Alergi',
+        value: data.types.length,
+        unit: 'jenis alergi',
+        icon: AppAssets.allergymonitoringIcon,
+        color: const Color(0xFFFF777B),
+      );
+      final allergicStudentCard = _Metric(
+        title: 'Siswa Alergi',
+        value: data.allergicStudents,
+        unit: 'siswa',
+        icon: AppAssets.manstudentIcon,
+        color: const Color(0xFFFFB58F),
+      );
+
+      if (useSingleColumn) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            allergyTypeCard,
+            const SizedBox(height: 12),
+            allergicStudentCard,
+          ],
+        );
+      }
+
+      return IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(child: allergyTypeCard),
+            const SizedBox(width: 12),
+            Expanded(child: allergicStudentCard),
+          ],
+        ),
       );
     },
   );

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../app/theme/app_colors.dart';
 import '../../../core/widgets/responsive_content.dart';
+import '../../../core/presentation/api_cubit.dart';
+import '../../partnership/data/sppg_dashboard_repository.dart';
 import '../data/sample_allergy_monitoring.dart';
 import '../domain/allergy_monitoring.dart';
 import 'components/allergy_charts.dart';
@@ -11,8 +14,9 @@ import 'components/allergy_summary.dart';
 import 'components/school_allergy_card.dart';
 
 class StudentAllergyMonitoringPage extends StatelessWidget {
-  const StudentAllergyMonitoringPage({super.key, this.data});
+  const StudentAllergyMonitoringPage({super.key, this.data, this.repository});
   final AllergyMonitoringData? data;
+  final SppgDashboardRepository? repository;
 
   void _goBack(BuildContext context) {
     final router = GoRouter.maybeOf(context);
@@ -27,7 +31,42 @@ class StudentAllergyMonitoringPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final monitoring = data ?? sampleAllergyMonitoring;
+    final source = repository;
+    if (source == null) {
+      return _buildPage(context, data ?? sampleAllergyMonitoring);
+    }
+    return BlocProvider(
+      create: (_) =>
+          ApiCubit<AllergyMonitoringData>()..run(source.getAllergyDashboard),
+      child:
+          BlocBuilder<
+            ApiCubit<AllergyMonitoringData>,
+            ApiState<AllergyMonitoringData>
+          >(
+            builder: (context, state) {
+              if (state.status == ApiStatus.loading && state.data == null) {
+                return const Scaffold(
+                  body: Center(child: CircularProgressIndicator()),
+                );
+              }
+              if (state.status == ApiStatus.failure && state.data == null) {
+                return Scaffold(
+                  appBar: AppBar(title: const Text('Monitoring Alergi Siswa')),
+                  body: Center(
+                    child: Text(state.message ?? 'Data gagal dimuat.'),
+                  ),
+                );
+              }
+              return _buildPage(
+                context,
+                state.data ?? data ?? sampleAllergyMonitoring,
+              );
+            },
+          ),
+    );
+  }
+
+  Widget _buildPage(BuildContext context, AllergyMonitoringData monitoring) {
     return Scaffold(
       backgroundColor: const Color(0xFFBFE7FC),
       appBar: AppBar(

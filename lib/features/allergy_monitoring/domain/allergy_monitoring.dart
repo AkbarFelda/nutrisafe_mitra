@@ -23,16 +23,19 @@ class SchoolAllergyData {
 }
 
 class AllergyMonitoringData {
-  const AllergyMonitoringData(this.schools);
+  const AllergyMonitoringData(this.schools, {this.breakdown = const {}});
   final List<SchoolAllergyData> schools;
-  int count(StudentAllergy allergy) => schools.fold(
-    0,
-    (total, school) =>
-        total +
-        school.studentAllergies
-            .where((allergies) => allergies.contains(allergy))
-            .length,
-  );
+  final Map<StudentAllergy, int> breakdown;
+  int count(StudentAllergy allergy) =>
+      breakdown[allergy] ??
+      schools.fold(
+        0,
+        (total, school) =>
+            total +
+            school.studentAllergies
+                .where((allergies) => allergies.contains(allergy))
+                .length,
+      );
   int get allergicStudents =>
       schools.fold(0, (total, school) => total + school.allergicStudents);
   List<StudentAllergy> get types =>

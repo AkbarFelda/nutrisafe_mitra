@@ -67,5 +67,7 @@ void main() {
     expect(data.files.map((entry) => entry.key), ['proposal', 'kitchen_photo']);
     expect(data.files.first.value.filename, 'proposal.pdf');
     expect(data.files.last.value.filename, 'dapur.jpg');
+    expect(data.files.first.value.contentType.toString(), 'application/pdf');
+    expect(data.files.last.value.contentType.toString(), 'image/jpeg');
   });
 }

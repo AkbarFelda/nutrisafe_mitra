@@ -1,5 +1,6 @@
 class FoodReport {
   const FoodReport({
+    this.id,
     required this.date,
     required this.school,
     required this.address,
@@ -9,8 +10,10 @@ class FoodReport {
     this.studentsWithAllergies,
     this.allergies = const [],
     this.menuItems = const [],
+    this.documentationPhotos = const [],
   });
 
+  final int? id;
   final DateTime date;
   final String school;
   final String address;
@@ -20,6 +23,7 @@ class FoodReport {
   final int? studentsWithAllergies;
   final List<FoodReportAllergy> allergies;
   final List<FoodReportMenuItem> menuItems;
+  final List<String> documentationPhotos;
 
   int? get distributionPercentage {
     final distributed = distributedPortions;

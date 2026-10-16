@@ -24,14 +24,17 @@ class FoodReportDetailPage extends StatelessWidget {
           icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.heading),
           onPressed: () => Navigator.maybePop(context),
         ),
-        title: Text(
-          'Detail Riwayat Laporan ${report.school}',
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: AppColors.heading,
+        title: FittedBox(
+          fit: BoxFit.scaleDown,
+          alignment: Alignment.centerLeft,
+          child: Text(
+            'Detail Riwayat Laporan ${report.school}',
+            maxLines: 1,
+            style: const TextStyle(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+              color: AppColors.heading,
+            ),
           ),
         ),
       ),
@@ -49,7 +52,7 @@ class FoodReportDetailPage extends StatelessWidget {
                 const SizedBox(height: 16),
                 _MenuTableCard(report: report),
                 const SizedBox(height: 16),
-                const _DocumentationCard(),
+                _DocumentationCard(photos: report.documentationPhotos),
                 const SizedBox(height: 24),
               ],
             ),
@@ -420,7 +423,9 @@ class _MenuTableCard extends StatelessWidget {
 }
 
 class _DocumentationCard extends StatelessWidget {
-  const _DocumentationCard();
+  const _DocumentationCard({required this.photos});
+
+  final List<String> photos;
 
   @override
   Widget build(BuildContext context) {
@@ -441,17 +446,66 @@ class _DocumentationCard extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 14),
-          Container(
-            height: 140,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade300, width: 1.5),
-              borderRadius: BorderRadius.circular(10),
+          if (photos.isEmpty)
+            Container(
+              width: double.infinity,
+              constraints: const BoxConstraints(minHeight: 120),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF7F9FB),
+                border: Border.all(color: Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Column(
+                mainAxisSize: MainAxisSize.min,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.image_not_supported_outlined,
+                    size: 38,
+                    color: Colors.grey,
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    'Belum ada foto dokumentasi',
+                    style: TextStyle(color: Colors.grey, fontSize: 12),
+                  ),
+                ],
+              ),
+            )
+          else
+            Column(
+              children: [
+                for (final (index, photo) in photos.indexed) ...[
+                  if (index > 0) const SizedBox(height: 12),
+                  Container(
+                    width: double.infinity,
+                    clipBehavior: Clip.antiAlias,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF1F3F5),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: const Color(0xFFE2E8F0)),
+                    ),
+                    child: AspectRatio(
+                      aspectRatio: 4 / 3,
+                      child: Image.asset(
+                        photo,
+                        width: double.infinity,
+                        alignment: Alignment.center,
+                        fit: BoxFit.contain,
+                        errorBuilder: (_, _, _) => const Center(
+                          child: Icon(
+                            Icons.broken_image_outlined,
+                            size: 42,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ],
             ),
-            child: const Center(
-              child: Icon(Icons.image_outlined, size: 48, color: Colors.grey),
-            ),
-          ),
         ],
       ),
     );
@@ -470,12 +524,23 @@ class _MetricValue extends StatelessWidget {
     crossAxisAlignment: CrossAxisAlignment.baseline,
     textBaseline: TextBaseline.alphabetic,
     children: [
-      Text(
-        value,
-        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+      Flexible(
+        child: Text(
+          value,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        ),
       ),
       const SizedBox(width: 3),
-      Text(unit, style: const TextStyle(fontSize: 10)),
+      Flexible(
+        child: Text(
+          unit,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(fontSize: 10),
+        ),
+      ),
     ],
   );
 }

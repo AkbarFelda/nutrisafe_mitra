@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import '../../../../app/theme/app_colors.dart';
 import '../../../../core/constants/app_assets.dart';
 import '../../../../core/widgets/app_icon.dart';
+import '../../data/sppg_dashboard_repository.dart';
 
 class PartnershipSummaryCard extends StatelessWidget {
-  const PartnershipSummaryCard({super.key});
+  const PartnershipSummaryCard({super.key, this.status});
+  final SppgStatus? status;
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -23,9 +25,9 @@ class PartnershipSummaryCard extends StatelessWidget {
           ),
         ],
       ),
-      child: const Column(
+      child: Column(
         children: [
-          Text(
+          const Text(
             'Status Kemitraan',
             style: TextStyle(
               fontSize: 16,
@@ -34,16 +36,18 @@ class PartnershipSummaryCard extends StatelessWidget {
             ),
           ),
 
-          SizedBox(height: 8),
+          const SizedBox(height: 8),
 
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              _StatusCheckIcon(),
-              SizedBox(width: 6),
+              const _StatusCheckIcon(),
+              const SizedBox(width: 6),
               Flexible(
                 child: Text(
-                  'Anda telah menjadi mitra SPPG!',
+                  status == null
+                      ? 'Anda telah menjadi mitra SPPG!'
+                      : 'Status kemitraan: ${status!.status}',
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -54,9 +58,9 @@ class PartnershipSummaryCard extends StatelessWidget {
             ],
           ),
 
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
 
-          _SummaryCounts(),
+          _SummaryCounts(schoolCount: status?.schoolCount ?? 2),
         ],
       ),
     ),
@@ -80,7 +84,8 @@ class _StatusCheckIcon extends StatelessWidget {
 }
 
 class _SummaryCounts extends StatelessWidget {
-  const _SummaryCounts();
+  const _SummaryCounts({required this.schoolCount});
+  final int schoolCount;
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +103,7 @@ class _SummaryCounts extends StatelessWidget {
           children: [
             SizedBox(
               width: width,
-              child: const _CountBadge(
+              child: _CountBadge(
                 label: 'Daftar SPPG',
                 count: '1',
                 icon: AppAssets.buildingIcon,
@@ -107,9 +112,9 @@ class _SummaryCounts extends StatelessWidget {
             ),
             SizedBox(
               width: width,
-              child: const _CountBadge(
+              child: _CountBadge(
                 label: 'Daftar Sekolah',
-                count: '2',
+                count: '$schoolCount',
                 icon: AppAssets.schoolIcon,
                 color: AppColors.primary,
               ),

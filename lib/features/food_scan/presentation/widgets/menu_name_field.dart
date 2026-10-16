@@ -14,7 +14,7 @@ class MenuNameField extends StatelessWidget {
     controller: controller,
     textInputAction: TextInputAction.next,
     decoration: const InputDecoration(
-      labelText: 'Nama menu',
+      labelText: 'Nama menu *',
       hintText: 'Contoh: Nasi ayam kecap',
       prefixIcon: Padding(
         padding: EdgeInsets.all(12),
@@ -23,7 +23,8 @@ class MenuNameField extends StatelessWidget {
       filled: true,
       fillColor: Colors.white,
     ),
-    validator: (value) =>
-        value == null || value.trim().isEmpty ? 'Nama menu wajib diisi' : null,
+    validator: (value) => value == null || value.trim().isEmpty
+        ? 'Nama menu wajib diisi sebelum mengirim laporan.'
+        : null,
   );
 }

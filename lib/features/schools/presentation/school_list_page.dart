@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../app/theme/app_colors.dart';
 import '../../../core/constants/app_assets.dart';
 import '../../../core/widgets/app_icon.dart';
 import '../../../core/widgets/responsive_content.dart';
+import '../../../core/presentation/api_cubit.dart';
+import '../../../core/error/app_failure.dart';
+import '../../partnership/data/sppg_dashboard_repository.dart';
 import '../data/sample_schools.dart';
 import '../domain/school.dart';
 
@@ -12,9 +17,14 @@ const _header = Color(0xFFCAF1FC);
 const _heading = Color(0xFF000769);
 
 class SchoolListPage extends StatelessWidget {
-  const SchoolListPage({super.key, this.schools = sampleSchools});
+  const SchoolListPage({
+    super.key,
+    this.schools = sampleSchools,
+    this.repository,
+  });
 
   final List<School> schools;
+  final SppgDashboardRepository? repository;
 
   void _goBack(BuildContext context) {
     final router = GoRouter.maybeOf(context);
@@ -28,60 +38,187 @@ class SchoolListPage extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-    backgroundColor: _background,
-    appBar: AppBar(
-      backgroundColor: _header,
-      foregroundColor: _heading,
-      scrolledUnderElevation: 0,
-      toolbarHeight: 68,
-      leadingWidth: 60,
-      leading: IconButton(
-        tooltip: 'Kembali',
-        icon: const Icon(Icons.arrow_back_ios_new, size: 28),
-        onPressed: () => _goBack(context),
+  Widget build(BuildContext context) {
+    final source = repository;
+    if (source == null) {
+      return _buildPage(
+        context,
+        SchoolDirectory(available: schools, assigned: const []),
+      );
+    }
+    return BlocProvider(
+      create: (_) =>
+          ApiCubit<SchoolDirectory>()..run(source.getSchoolDirectory),
+      child: BlocBuilder<ApiCubit<SchoolDirectory>, ApiState<SchoolDirectory>>(
+        builder: (context, state) {
+          if (state.status == ApiStatus.loading && state.data == null) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+          if (state.status == ApiStatus.failure && state.data == null) {
+            return Scaffold(
+              appBar: AppBar(title: const Text('Daftar Sekolah')),
+              body: Center(child: Text(state.message ?? 'Data gagal dimuat.')),
+            );
+          }
+          return _buildPage(
+            context,
+            state.data ??
+                SchoolDirectory(available: schools, assigned: const []),
+          );
+        },
       ),
-      titleSpacing: 0,
-      title: const Text(
-        'Daftar Sekolah',
-        style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-      ),
-    ),
-    body: SafeArea(
-      top: false,
-      child: ResponsiveContent(
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(20, 18, 20, 24),
-          children: [
-            _SchoolSummary(schools: schools),
-            const SizedBox(height: 18),
-            const Padding(
-              padding: EdgeInsets.only(left: 5, bottom: 8),
-              child: Text(
-                'Daftar Sekolah',
-                style: TextStyle(
-                  fontSize: 15,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black,
-                ),
+    );
+  }
+
+  Widget _buildPage(BuildContext context, SchoolDirectory directory) {
+    final selected = <int>{};
+    var assigning = false;
+    return StatefulBuilder(
+      builder: (context, setLocalState) => DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          backgroundColor: _background,
+          appBar: AppBar(
+            backgroundColor: _header,
+            foregroundColor: _heading,
+            scrolledUnderElevation: 0,
+            leading: IconButton(
+              tooltip: 'Kembali',
+              icon: const Icon(Icons.arrow_back_ios_new, size: 28),
+              onPressed: () => _goBack(context),
+            ),
+            title: const Text(
+              'Daftar Sekolah',
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
+            ),
+            bottom: const TabBar(
+              labelColor: _heading,
+              indicatorColor: AppColors.primary,
+              tabs: [
+                Tab(text: 'Tersedia'),
+                Tab(text: 'Terhubung'),
+              ],
+            ),
+          ),
+          body: SafeArea(
+            top: false,
+            child: ResponsiveContent(
+              child: TabBarView(
+                children: [
+                  _schoolList(
+                    schools: directory.available,
+                    emptyMessage: 'Tidak ada sekolah yang tersedia',
+                    children: [
+                      for (final school in directory.available) ...[
+                        _SchoolCard(
+                          school: school,
+                          selected:
+                              school.id != null && selected.contains(school.id),
+                          onSelected: school.id == null
+                              ? null
+                              : (checked) => setLocalState(() {
+                                  checked
+                                      ? selected.add(school.id!)
+                                      : selected.remove(school.id);
+                                }),
+                        ),
+                        const SizedBox(height: 7),
+                      ],
+                      if (repository != null &&
+                          directory.available.any(
+                            (school) => school.id != null,
+                          ))
+                        Padding(
+                          padding: const EdgeInsets.only(top: 12),
+                          child: FilledButton.icon(
+                            key: const Key('assign-schools-button'),
+                            onPressed: assigning || selected.isEmpty
+                                ? null
+                                : () async {
+                                    setLocalState(() => assigning = true);
+                                    try {
+                                      await repository!.assignSchools(
+                                        selected.toList(),
+                                      );
+                                      if (!context.mounted) return;
+                                      await context
+                                          .read<ApiCubit<SchoolDirectory>>()
+                                          .run(repository!.getSchoolDirectory);
+                                      if (!context.mounted) return;
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                'Sekolah berhasil dihubungkan.',
+                                              ),
+                                            ),
+                                          );
+                                    } catch (error) {
+                                      if (!context.mounted) return;
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
+                                            SnackBar(
+                                              content: Text(
+                                                AppFailure.from(error).message,
+                                              ),
+                                            ),
+                                          );
+                                    } finally {
+                                      if (context.mounted) {
+                                        setLocalState(() => assigning = false);
+                                      }
+                                    }
+                                  },
+                            icon: assigning
+                                ? const SizedBox.square(
+                                    dimension: 18,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : const Icon(Icons.link_rounded),
+                            label: const Text('Hubungkan Sekolah Terpilih'),
+                          ),
+                        ),
+                    ],
+                  ),
+                  _schoolList(
+                    schools: directory.assigned,
+                    emptyMessage: 'Belum ada sekolah yang terhubung',
+                    children: [
+                      for (final school in directory.assigned) ...[
+                        _SchoolCard(school: school),
+                        const SizedBox(height: 7),
+                      ],
+                    ],
+                  ),
+                ],
               ),
             ),
-            if (schools.isEmpty)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 24),
-                child: Text(
-                  'Belum ada sekolah terdaftar',
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            for (final school in schools) ...[
-              _SchoolCard(school: school),
-              const SizedBox(height: 7),
-            ],
-          ],
+          ),
         ),
       ),
-    ),
+    );
+  }
+
+  Widget _schoolList({
+    required List<School> schools,
+    required String emptyMessage,
+    required List<Widget> children,
+  }) => ListView(
+    padding: const EdgeInsets.fromLTRB(20, 18, 20, 24),
+    children: [
+      _SchoolSummary(schools: schools),
+      const SizedBox(height: 18),
+      if (schools.isEmpty)
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 24),
+          child: Text(emptyMessage, textAlign: TextAlign.center),
+        ),
+      ...children,
+    ],
   );
 }
 
@@ -94,37 +231,38 @@ class _SchoolSummary extends StatelessWidget {
   Widget build(BuildContext context) => LayoutBuilder(
     builder: (context, constraints) {
       final scale = MediaQuery.textScalerOf(context).scale(13) / 13;
-      final width = constraints.maxWidth < 340 * scale
-          ? constraints.maxWidth
-          : (constraints.maxWidth - 16) / 2;
-      return Wrap(
-        spacing: 16,
-        runSpacing: 10,
-        children: [
-          SizedBox(
-            width: width,
-            child: _SummaryCard(
-              icon: '🏫',
-              title: 'Jumlah Sekolah',
-              value: schools.length,
-              unit: 'Sekolah',
-              color: const Color(0xFF76FFD7),
-            ),
-          ),
-          SizedBox(
-            width: width,
-            child: _SummaryCard(
-              icon: '👨‍🎓',
-              title: 'Total Siswa',
-              value: schools.fold<int>(
-                0,
-                (sum, school) => sum + school.students,
-              ),
-              unit: 'Siswa',
-              color: const Color(0xFFFFF9A0),
-            ),
-          ),
-        ],
+      final useSingleColumn = constraints.maxWidth < 340 * scale;
+      final schoolCard = _SummaryCard(
+        icon: '🏫',
+        title: 'Total Sekolah',
+        value: schools.length,
+        unit: 'Sekolah',
+        color: const Color(0xFF76FFD7),
+      );
+      final studentCard = _SummaryCard(
+        icon: '👨‍🎓',
+        title: 'Total Siswa',
+        value: schools.fold<int>(0, (sum, school) => sum + school.students),
+        unit: 'Siswa',
+        color: const Color(0xFFFFF9A0),
+      );
+
+      if (useSingleColumn) {
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [schoolCard, const SizedBox(height: 10), studentCard],
+        );
+      }
+
+      return IntrinsicHeight(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Expanded(child: schoolCard),
+            const SizedBox(width: 16),
+            Expanded(child: studentCard),
+          ],
+        ),
       );
     },
   );
@@ -200,17 +338,26 @@ class _SummaryCard extends StatelessWidget {
 }
 
 class _SchoolCard extends StatelessWidget {
-  const _SchoolCard({required this.school});
+  const _SchoolCard({
+    required this.school,
+    this.selected = false,
+    this.onSelected,
+  });
 
   final School school;
+  final bool selected;
+  final ValueChanged<bool>? onSelected;
 
   @override
   Widget build(BuildContext context) => Container(
     padding: const EdgeInsets.all(11),
     decoration: BoxDecoration(
-      color: const Color(0xFF9FE8F8),
-      border: Border.all(color: const Color(0xFFADBDBF)),
-      borderRadius: BorderRadius.circular(5),
+      color: selected ? const Color(0xFFD9F4FF) : const Color(0xFF9FE8F8),
+      border: Border.all(
+        color: selected ? AppColors.primary : const Color(0xFFADBDBF),
+        width: selected ? 2 : 1,
+      ),
+      borderRadius: BorderRadius.circular(10),
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -264,6 +411,26 @@ class _SchoolCard extends StatelessWidget {
                 ],
               ),
             ),
+            if (onSelected != null)
+              Column(
+                children: [
+                  Checkbox(
+                    key: Key('school-checkbox-${school.id}'),
+                    value: selected,
+                    onChanged: (value) => onSelected!(value ?? false),
+                    activeColor: AppColors.primary,
+                  ),
+                  if (selected)
+                    const Text(
+                      'Terpilih',
+                      style: TextStyle(
+                        color: AppColors.primary,
+                        fontSize: 9,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                ],
+              ),
           ],
         ),
         if (school.allergies.isNotEmpty) ...[
@@ -290,6 +457,26 @@ class _SchoolCard extends StatelessWidget {
                 ],
               );
             },
+          ),
+        ],
+        if (school.allergies.isEmpty && school.allergyTypes.isNotEmpty) ...[
+          const SizedBox(height: 11),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final allergy in school.allergyTypes)
+                Chip(
+                  avatar: const CircleAvatar(
+                    radius: 6,
+                    backgroundColor: Color(0xFFF00000),
+                  ),
+                  label: Text('Alergi $allergy'),
+                  visualDensity: VisualDensity.compact,
+                  side: BorderSide.none,
+                  backgroundColor: Colors.white.withValues(alpha: 0.72),
+                ),
+            ],
           ),
         ],
       ],

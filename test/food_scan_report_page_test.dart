@@ -12,6 +12,11 @@ void main() {
 
     expect(find.text('Scan & Pelaporan Menu'), findsOneWidget);
     expect(find.byKey(const Key('menu-name-field')), findsOneWidget);
+    expect(find.byKey(const Key('portions-field')), findsOneWidget);
+    expect(find.byKey(const Key('calories-field')), findsOneWidget);
+    expect(find.byKey(const Key('protein-field')), findsOneWidget);
+    expect(find.byKey(const Key('carbs-field')), findsOneWidget);
+    expect(find.byKey(const Key('fat-field')), findsOneWidget);
     expect(find.text('Buka Kamera'), findsOneWidget);
     expect(find.text('Galeri'), findsOneWidget);
     await tester.drag(find.byType(ListView), const Offset(0, -500));
@@ -24,6 +29,25 @@ void main() {
     expect(find.text('Kirim Laporan Menu'), findsOneWidget);
   });
 
+  testWidgets('semua informasi gizi wajib diisi sebelum analisis', (
+    tester,
+  ) async {
+    await tester.pumpWidget(buildPage());
+    await tester.enterText(
+      find.byKey(const Key('menu-name-field')),
+      'Nasi ayam',
+    );
+    await tester.drag(find.byType(ListView), const Offset(0, -1000));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('analyze-food')));
+    await tester.pump();
+
+    expect(
+      find.text('Lengkapi seluruh informasi menu terlebih dahulu.'),
+      findsOneWidget,
+    );
+  });
+
   testWidgets('memvalidasi foto sebelum laporan dikirim', (tester) async {
     await tester.pumpWidget(buildPage());
 
@@ -31,6 +55,11 @@ void main() {
       find.byKey(const Key('menu-name-field')),
       'Nasi ayam kecap',
     );
+    await tester.enterText(find.byKey(const Key('portions-field')), '10');
+    await tester.enterText(find.byKey(const Key('calories-field')), '480');
+    await tester.enterText(find.byKey(const Key('protein-field')), '25');
+    await tester.enterText(find.byKey(const Key('carbs-field')), '60');
+    await tester.enterText(find.byKey(const Key('fat-field')), '14');
     await tester.drag(find.byType(ListView), const Offset(0, -1800));
     await tester.pumpAndSettle();
     await tester.tap(find.byKey(const Key('submit-food-report')));
@@ -39,6 +68,24 @@ void main() {
     expect(
       find.text('Tambahkan foto menu makanan terlebih dahulu.'),
       findsOneWidget,
+    );
+  });
+
+  testWidgets('nama menu wajib diisi sebelum laporan dikirim', (tester) async {
+    await tester.pumpWidget(buildPage());
+
+    await tester.drag(find.byType(ListView), const Offset(0, -1800));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const Key('submit-food-report')));
+    await tester.pump();
+
+    expect(
+      find.text('Nama menu wajib diisi sebelum mengirim laporan.'),
+      findsOneWidget,
+    );
+    expect(
+      find.text('Tambahkan foto menu makanan terlebih dahulu.'),
+      findsNothing,
     );
   });
 

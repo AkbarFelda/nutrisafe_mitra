@@ -55,7 +55,7 @@ void main() {
     await tester.pumpWidget(app(schools: const []));
     expect(find.text('0 Sekolah', findRichText: true), findsOneWidget);
     expect(find.text('0 Siswa', findRichText: true), findsOneWidget);
-    expect(find.text('Belum ada sekolah terdaftar'), findsOneWidget);
+    expect(find.text('Tidak ada sekolah yang tersedia'), findsOneWidget);
   });
 
   for (final scenario in [
@@ -73,7 +73,15 @@ void main() {
         addTearDown(() => tester.binding.setSurfaceSize(null));
         await tester.pumpWidget(app(scale: scenario.scale));
         await tester.pumpAndSettle();
-        await tester.scrollUntilVisible(find.text('4 Siswa Alergi Susu'), 150);
+        final availableSchoolList = find.descendant(
+          of: find.byType(ListView).first,
+          matching: find.byType(Scrollable),
+        );
+        await tester.scrollUntilVisible(
+          find.text('4 Siswa Alergi Susu'),
+          150,
+          scrollable: availableSchoolList,
+        );
         await tester.pumpAndSettle();
         expect(find.text('4 Siswa Alergi Susu').hitTestable(), findsOneWidget);
         expect(tester.takeException(), isNull);

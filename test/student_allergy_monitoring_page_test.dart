@@ -19,10 +19,12 @@ void main() {
     expect(data.allergicStudents, 2);
     expect(data.totalAllergies, 3);
     expect(data.types.length, 3);
-    expect(sampleAllergyMonitoring.allergicStudents, 19);
+    expect(sampleAllergyMonitoring.allergicStudents, 18);
     expect(sampleAllergyMonitoring.count(StudentAllergy.peanut), 10);
-    expect(sampleAllergyMonitoring.count(StudentAllergy.egg), 5);
-    expect(sampleAllergyMonitoring.count(StudentAllergy.milk), 4);
+    expect(sampleAllergyMonitoring.count(StudentAllergy.egg), 8);
+    expect(sampleAllergyMonitoring.count(StudentAllergy.milk), 0);
+    expect(sampleAllergyMonitoring.schools[0].students, 196);
+    expect(sampleAllergyMonitoring.schools[1].students, 360);
   });
 
   for (final size in [
@@ -46,13 +48,13 @@ void main() {
           ),
         );
         await tester.pumpAndSettle();
-        expect(find.text('19'), findsOneWidget);
+        expect(find.text('18'), findsOneWidget);
         expect(tester.takeException(), isNull);
         await tester.scrollUntilVisible(find.text('Jumlah Siswa Alergi'), 200);
         expect(tester.takeException(), isNull);
         await tester.scrollUntilVisible(find.text('SMPN 1 Subang'), 200);
         await tester.pumpAndSettle();
-        expect(find.text('3,53% siswa alergi'), findsOneWidget);
+        expect(find.text('2,50% siswa alergi'), findsOneWidget);
         expect(tester.takeException(), isNull);
       });
     }
@@ -67,7 +69,7 @@ void main() {
       ),
     );
     expect(find.text('0'), findsWidgets);
-    expect(find.text('19'), findsNothing);
+    expect(find.text('18'), findsNothing);
     expect(find.text('Belum ada data alergi siswa'), findsOneWidget);
     await tester.scrollUntilVisible(find.text('Belum ada data sekolah'), 200);
     expect(tester.takeException(), isNull);

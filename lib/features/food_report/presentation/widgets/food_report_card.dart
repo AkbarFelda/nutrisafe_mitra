@@ -6,9 +6,10 @@ import '../../domain/food_report.dart';
 import '../food_report_detail_page.dart';
 
 class FoodReportCard extends StatelessWidget {
-  const FoodReportCard({super.key, required this.report});
+  const FoodReportCard({super.key, required this.report, this.onTap});
 
   final FoodReport report;
+  final VoidCallback? onTap;
 
   void _showDetail(BuildContext context) {
     Navigator.of(context).push(
@@ -62,7 +63,7 @@ class FoodReportCard extends StatelessWidget {
         ),
         const SizedBox(width: 8),
         ElevatedButton(
-          onPressed: () => _showDetail(context),
+          onPressed: onTap ?? () => _showDetail(context),
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color(0xFF1E74D2),
             foregroundColor: Colors.white,

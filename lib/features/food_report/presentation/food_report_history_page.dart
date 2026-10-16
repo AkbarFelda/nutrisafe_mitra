@@ -8,20 +8,43 @@ import '../../../core/widgets/responsive_content.dart';
 import '../data/sample_food_reports.dart';
 import '../domain/food_report.dart';
 import 'widgets/food_report_card.dart';
+import '../../partnership/data/sppg_dashboard_repository.dart';
+import 'food_report_detail_page.dart';
 
 class FoodReportHistoryPage extends StatefulWidget {
-  const FoodReportHistoryPage({super.key, this.reports});
+  const FoodReportHistoryPage({super.key, this.reports, this.repository});
 
   final List<FoodReport>? reports;
+  final SppgDashboardRepository? repository;
 
   @override
   State<FoodReportHistoryPage> createState() => _FoodReportHistoryPageState();
 }
 
 class _FoodReportHistoryPageState extends State<FoodReportHistoryPage> {
-  int _selectedMonth = 3;
-
+  late int _selectedMonth;
+  Future<List<FoodReport>>? _futureReports;
   List<FoodReport> get _reports => widget.reports ?? sampleFoodReports;
+
+  @override
+  void initState() {
+    super.initState();
+    final providedReports = widget.reports;
+    _selectedMonth = providedReports != null && providedReports.isNotEmpty
+        ? providedReports.first.date.month
+        : DateTime.now().month;
+    _loadReports();
+  }
+
+  void _loadReports() {
+    final repository = widget.repository;
+    if (repository != null) {
+      _futureReports = repository.getDeliveryReports(
+        month: _selectedMonth,
+        year: DateTime.now().year,
+      );
+    }
+  }
 
   void _handleBack() {
     final router = GoRouter.maybeOf(context);
@@ -34,10 +57,93 @@ class _FoodReportHistoryPageState extends State<FoodReportHistoryPage> {
     }
   }
 
+  Future<void> _openDetail(FoodReport report) async {
+    var detail = report;
+    final id = report.id;
+    if (widget.repository != null && id != null && id > 0) {
+      try {
+        detail = await widget.repository!.getDeliveryReportDetail(id);
+      } catch (_) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Detail pengiriman belum dapat dimuat.')),
+        );
+        return;
+      }
+    }
+    if (!mounted) return;
+    await Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => FoodReportDetailPage(report: detail),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    final future = _futureReports;
+    if (future == null) return _buildPage(_reports);
+    return FutureBuilder<List<FoodReport>>(
+      future: future,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
+          return _loadingPage();
+        }
+        if (snapshot.hasError) {
+          return _errorPage(snapshot.error!);
+        }
+        return _buildPage(snapshot.data ?? const []);
+      },
+    );
+  }
+
+  Widget _loadingPage() => Scaffold(
+    backgroundColor: AppColors.loginBackground,
+    appBar: _appBar(),
+    body: const Center(child: CircularProgressIndicator()),
+  );
+
+  Widget _errorPage(Object error) => Scaffold(
+    backgroundColor: AppColors.loginBackground,
+    appBar: _appBar(),
+    body: Center(
+      child: Padding(
+        padding: const EdgeInsets.all(24),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('Riwayat pengiriman belum dapat dimuat.'),
+            const SizedBox(height: 12),
+            FilledButton(
+              onPressed: () => setState(_loadReports),
+              child: const Text('Coba lagi'),
+            ),
+          ],
+        ),
+      ),
+    ),
+  );
+
+  PreferredSizeWidget _appBar() => AppBar(
+    backgroundColor: AppColors.loginBackground,
+    scrolledUnderElevation: 0,
+    leading: IconButton(
+      tooltip: 'Kembali',
+      icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.heading),
+      onPressed: _handleBack,
+    ),
+    title: const Text(
+      'Riwayat Pengiriman',
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+    ),
+  );
+
+  Widget _buildPage(List<FoodReport> allReports) {
     final reports =
-        _reports.where((report) => report.date.month == _selectedMonth).toList()
+        allReports
+            .where((report) => report.date.month == _selectedMonth)
+            .toList()
           ..sort((a, b) => b.date.compareTo(a.date));
     final groups = <DateTime, List<FoodReport>>{};
     for (final report in reports) {
@@ -51,25 +157,7 @@ class _FoodReportHistoryPageState extends State<FoodReportHistoryPage> {
     final days = groups.keys.toList();
     return Scaffold(
       backgroundColor: AppColors.loginBackground,
-      appBar: AppBar(
-        backgroundColor: AppColors.loginBackground,
-        scrolledUnderElevation: 0,
-        leading: IconButton(
-          tooltip: 'Kembali',
-          icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.heading),
-          onPressed: _handleBack,
-        ),
-        title: const Text(
-          'Riwayat Laporan Makanan',
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.bold,
-            color: AppColors.heading,
-          ),
-        ),
-      ),
+      appBar: _appBar(),
       body: SafeArea(
         top: false,
         child: ResponsiveContent(
@@ -120,7 +208,10 @@ class _FoodReportHistoryPageState extends State<FoodReportHistoryPage> {
                           ],
                           onChanged: (value) {
                             if (value != null) {
-                              setState(() => _selectedMonth = value);
+                              setState(() {
+                                _selectedMonth = value;
+                                _loadReports();
+                              });
                             }
                           },
                         ),
@@ -143,7 +234,7 @@ class _FoodReportHistoryPageState extends State<FoodReportHistoryPage> {
                             const AppIcon(AppAssets.recentreportIcon, size: 56),
                             const SizedBox(height: 16),
                             Text(
-                              _reports.isEmpty
+                              allReports.isEmpty
                                   ? 'Belum ada laporan makanan'
                                   : 'Belum ada laporan bulan ini',
                               textAlign: TextAlign.center,
@@ -154,7 +245,7 @@ class _FoodReportHistoryPageState extends State<FoodReportHistoryPage> {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              _reports.isEmpty
+                              allReports.isEmpty
                                   ? 'Laporan makanan yang telah dikirim akan muncul di sini.'
                                   : 'Silakan pilih bulan lain untuk melihat riwayat laporan.',
                               textAlign: TextAlign.center,
@@ -190,7 +281,10 @@ class _FoodReportHistoryPageState extends State<FoodReportHistoryPage> {
                               ),
                               for (final report in groups[day]!) ...[
                                 const SizedBox(height: 8),
-                                FoodReportCard(report: report),
+                                FoodReportCard(
+                                  report: report,
+                                  onTap: () => _openDetail(report),
+                                ),
                               ],
                             ],
                           ),

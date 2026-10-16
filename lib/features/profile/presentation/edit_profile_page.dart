@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../app/theme/app_colors.dart';
+import '../../../core/presentation/api_cubit.dart';
+import '../data/profile_repository.dart';
+import '../data/sppg_profile.dart';
 import 'widgets/profile_form_scaffold.dart';
 
 class EditProfilePage extends StatefulWidget {
-  const EditProfilePage({super.key});
+  const EditProfilePage({super.key, this.repository});
+
+  final ProfileRepository? repository;
 
   @override
   State<EditProfilePage> createState() => _EditProfilePageState();
@@ -12,10 +17,33 @@ class EditProfilePage extends StatefulWidget {
 
 class _EditProfilePageState extends State<EditProfilePage> {
   final _formKey = GlobalKey<FormState>();
-  final _nameController = TextEditingController(text: 'Mitra SPPG');
-  final _emailController = TextEditingController(text: 'mitra@nutrisafe.id');
-  final _phoneController = TextEditingController(text: '0812 3456 7890');
+  final _nameController = TextEditingController();
+  final _emailController = TextEditingController();
+  final _phoneController = TextEditingController();
   final _addressController = TextEditingController();
+  final _institutionController = TextEditingController();
+  final _apiCubit = ApiCubit<SppgProfile>();
+
+  @override
+  void initState() {
+    super.initState();
+    final repository = widget.repository;
+    if (repository != null) {
+      _apiCubit.run(repository.getProfile).then((success) {
+        final profile = _apiCubit.state.data;
+        if (!success || !mounted || profile == null) return;
+        _fill(profile);
+      });
+    }
+  }
+
+  void _fill(SppgProfile profile) {
+    _nameController.text = profile.name;
+    _emailController.text = profile.email;
+    _phoneController.text = profile.phone;
+    _addressController.text = profile.location;
+    _institutionController.text = profile.institutionName;
+  }
 
   @override
   void dispose() {
@@ -23,90 +51,104 @@ class _EditProfilePageState extends State<EditProfilePage> {
     _emailController.dispose();
     _phoneController.dispose();
     _addressController.dispose();
+    _institutionController.dispose();
+    _apiCubit.close();
     super.dispose();
   }
 
   @override
-  Widget build(BuildContext context) => ProfileFormScaffold(
-    title: 'Edit Profil',
-    child: Form(
-      key: _formKey,
-      child: Column(
-        children: [
-          Stack(
-            alignment: Alignment.bottomRight,
+  Widget build(BuildContext context) => BlocProvider.value(
+    value: _apiCubit,
+    child: BlocListener<ApiCubit<SppgProfile>, ApiState<SppgProfile>>(
+      listener: (context, state) {
+        if (state.status == ApiStatus.failure && state.message != null) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(state.message!)));
+        } else if (state.status == ApiStatus.success && state.message != null) {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(state.message!)));
+        }
+      },
+      child: ProfileFormScaffold(
+        title: 'Edit Profil',
+        child: Form(
+          key: _formKey,
+          child: Column(
             children: [
-              const CircleAvatar(
-                radius: 50,
-                backgroundColor: AppColors.primary,
-                child: Icon(
-                  Icons.person_rounded,
-                  color: Colors.white,
-                  size: 58,
-                ),
-              ),
-              Material(
-                color: AppColors.heading,
-                shape: const CircleBorder(),
-                child: IconButton(
-                  key: const Key('change-profile-photo'),
-                  tooltip: 'Ubah foto profil',
-                  onPressed: () => ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Pilih foto profil dari perangkat.'),
+              ProfileSectionCard(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _ProfileField(
+                      label: 'Nama mitra',
+                      controller: _nameController,
                     ),
-                  ),
-                  icon: const Icon(
-                    Icons.camera_alt_rounded,
-                    color: Colors.white,
-                    size: 20,
-                  ),
+                    const SizedBox(height: 16),
+                    _ProfileField(
+                      label: 'Email',
+                      controller: _emailController,
+                      keyboardType: TextInputType.emailAddress,
+                    ),
+                    const SizedBox(height: 16),
+                    _ProfileField(
+                      label: 'Nomor telepon',
+                      controller: _phoneController,
+                      keyboardType: TextInputType.phone,
+                    ),
+                    const SizedBox(height: 16),
+                    _ProfileField(
+                      label: 'Alamat',
+                      controller: _addressController,
+                      maxLines: 3,
+                      required: false,
+                    ),
+                    const SizedBox(height: 16),
+                    _ProfileField(
+                      label: 'Nama instansi',
+                      controller: _institutionController,
+                      required: false,
+                    ),
+                    const SizedBox(height: 24),
+                    BlocBuilder<ApiCubit<SppgProfile>, ApiState<SppgProfile>>(
+                      builder: (context, state) => FilledButton(
+                        key: const Key('save-profile-button'),
+                        onPressed: state.status == ApiStatus.loading
+                            ? null
+                            : () {
+                                if (!(_formKey.currentState?.validate() ??
+                                    false)) {
+                                  return;
+                                }
+                                final repository = widget.repository;
+                                if (repository == null) return;
+                                _apiCubit.run(
+                                  () => repository.updateProfile(
+                                    SppgProfile(
+                                      name: _nameController.text.trim(),
+                                      email: _emailController.text.trim(),
+                                      phone: _phoneController.text.trim(),
+                                      location: _addressController.text.trim(),
+                                      institutionName: _institutionController
+                                          .text
+                                          .trim(),
+                                    ),
+                                  ),
+                                  successMessage: 'Profil berhasil disimpan.',
+                                );
+                              },
+                        child: Text(
+                          state.status == ApiStatus.loading
+                              ? 'Menyimpan...'
+                              : 'Simpan Perubahan',
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 24),
-          ProfileSectionCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _ProfileField(label: 'Nama mitra', controller: _nameController),
-                const SizedBox(height: 16),
-                _ProfileField(
-                  label: 'Email',
-                  controller: _emailController,
-                  keyboardType: TextInputType.emailAddress,
-                ),
-                const SizedBox(height: 16),
-                _ProfileField(
-                  label: 'Nomor telepon',
-                  controller: _phoneController,
-                  keyboardType: TextInputType.phone,
-                ),
-                const SizedBox(height: 16),
-                _ProfileField(
-                  label: 'Alamat',
-                  controller: _addressController,
-                  maxLines: 3,
-                  required: false,
-                ),
-                const SizedBox(height: 24),
-                FilledButton(
-                  key: const Key('save-profile-button'),
-                  onPressed: () {
-                    if (!(_formKey.currentState?.validate() ?? false)) return;
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text('Profil berhasil disimpan.'),
-                      ),
-                    );
-                  },
-                  child: const Text('Simpan Perubahan'),
-                ),
-              ],
-            ),
-          ),
-        ],
+        ),
       ),
     ),
   );
