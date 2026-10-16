@@ -1,139 +1,295 @@
 # NutriSafe Mitra
 
-Flutter foundation exclusively for Mitra/SPPG users of the MBG system. No School,
-Student, Admin, or business workflows are implemented.
+> **Platform pemantauan keamanan pangan dan distribusi makanan bergizi untuk ekosistem Program Makan Bergizi Gratis (MBG).**
 
-## Run
+NutriSafe membantu Satuan Pelayanan Pemenuhan Gizi (SPPG), sekolah, pengelola program, dan masyarakat bekerja dalam satu alur yang terhubung. Aplikasi **NutriSafe Mitra** pada repository ini berfokus pada operasional SPPG: mengelola sekolah binaan, memindai menu dengan bantuan AI, memantau alergi siswa, mengirim laporan, dan menindaklanjuti masalah makanan.
 
-Use the Flutter SDK compatible with `pubspec.yaml` (verified with Flutter 3.47.5,
-Dart 3.13.4). Run `flutter pub get`, then `flutter run`.
-Without API configuration the app still opens the login availability page; network
-requests fail locally with a configuration failure.
+- Backend produksi: [`https://api.nutrisafe.id`](https://api.nutrisafe.id)
+- Dokumentasi API: [NutriSafe API — Semua Role](https://documenter.getpostman.com/view/28796164/2sBYHSwzid)
 
-Supply the actual backend HTTPS base URL through
-`flutter run --dart-define=API_BASE_URL=<backend-base-url>`.
-Use a trailing slash when the base URL contains an API path prefix, and relative
-paths in data sources to preserve that prefix. Do not put secrets in dart-defines.
-No API endpoint, credentials schema, or response envelope has been assumed.
+---
 
-## Structure
+## Mengapa NutriSafe?
+
+Distribusi makanan dalam skala besar bukan hanya persoalan jumlah porsi. Setiap menu perlu aman, sesuai kebutuhan gizi, terdokumentasi, dan dapat ditelusuri ketika terjadi masalah. Data alergi siswa juga harus sampai kepada pihak yang menyiapkan makanan sebelum menu dikirim.
+
+NutriSafe menjawab kebutuhan tersebut melalui:
+
+- deteksi bahan dan estimasi nutrisi berbasis foto;
+- perbandingan data gizi SPPG dengan hasil analisis AI;
+- pemantauan alergi siswa pada setiap sekolah binaan;
+- pencatatan menu serta pengiriman makanan secara terstruktur;
+- jalur pelaporan masalah dan komplain yang dapat ditelusuri;
+- notifikasi lintas role untuk mempercepat tindak lanjut.
+
+## Aplikasi dalam repository ini
+
+Repository ini berisi aplikasi Flutter **NutriSafe Mitra**, yaitu aplikasi untuk role **SPPG/Mitra**. UI Admin BGN, Sekolah, dan Masyarakat merupakan bagian dari ekosistem NutriSafe yang berkomunikasi melalui backend yang sama, tetapi tidak diimplementasikan di repository ini.
+
+## Fitur utama NutriSafe Mitra
+
+### 1. Autentikasi dan profil SPPG
+
+- Login khusus akun berdomain `@sppg.id`.
+- Penyimpanan token secara aman menggunakan secure storage.
+- Melihat dan memperbarui profil SPPG.
+- Melihat status persetujuan kemitraan dan kapasitas produksi.
+- Perubahan serta pemulihan kata sandi.
+
+### 2. Pengelolaan sekolah binaan
+
+- Melihat sekolah yang belum memiliki mitra.
+- Menghubungkan sekolah dengan SPPG.
+- Melihat sekolah binaan beserta jumlah siswa, guru, dan jenis alergi.
+
+### 3. Monitoring alergi siswa
+
+- Ringkasan sekolah binaan dan data alergi.
+- Distribusi jenis alergi di seluruh sekolah.
+- Jumlah kejadian alergi per sekolah sebagai bahan perencanaan menu.
+
+### 4. Scan dan analisis menu berbasis AI
+
+- Mengunggah atau mengambil foto menu makanan.
+- Mengirim foto dan jumlah porsi ke endpoint analisis.
+- Menampilkan bahan yang terdeteksi.
+- Menampilkan peringatan alergi dan status gizi.
+- Membandingkan input nutrisi SPPG dengan estimasi AI per porsi.
+- Menampilkan total nutrisi yang terdeteksi pada foto.
+- Mendukung rekomendasi menu pengganti ketika layanan rekomendasi backend aktif.
+
+### 5. Pelaporan menu harian
+
+- Memastikan satu laporan menu untuk setiap SPPG per hari.
+- Mengirim nutrisi total, jumlah porsi, bahan terdeteksi, referensi foto, dan hasil rekomendasi.
+- Memeriksa status laporan hari ini sebelum pengguna mengirim ulang.
+
+### 6. Riwayat dan detail pengiriman
+
+- Filter riwayat berdasarkan bulan dan tahun.
+- Informasi sekolah tujuan, jumlah porsi, status, serta persentase distribusi.
+- Rincian menu, kebutuhan substitusi alergi, dan dokumentasi foto.
+- Tampilan responsif hingga layar 320 px dan pembesaran teks 2×.
+
+### 7. Laporan makanan bermasalah
+
+- Menerima komplain dari Sekolah/Masyarakat.
+- Menampilkan jenis masalah, makanan, sekolah, porsi terdampak, status, dan foto bukti.
+- Mendukung pengiriman laporan masalah internal SPPG melalui API.
+
+### 8. Notifikasi berbasis API
+
+- Daftar notifikasi pengguna yang sedang login.
+- Jumlah notifikasi belum dibaca.
+- Tandai satu atau seluruh notifikasi sebagai dibaca.
+- Pull-to-refresh, loading state, error state, dan empty state.
+
+## Role dalam ekosistem NutriSafe
+
+| Role | Tanggung jawab utama |
+|---|---|
+| **Admin BGN** | Memverifikasi pendaftaran SPPG, mengawasi kemitraan, dan memantau operasional program. |
+| **SPPG / Mitra** | Menyiapkan menu, memperhatikan data alergi, mencatat nutrisi, dan mengirim makanan ke sekolah. |
+| **Sekolah** | Mengelola data siswa dan alergi, menerima distribusi, serta melaporkan kondisi makanan. |
+| **Masyarakat / Umum** | Memantau informasi yang tersedia dan menyampaikan laporan makanan melalui kanal publik. |
+
+## Alur masing-masing role
+
+### Admin BGN
+
+1. Admin login ke sistem.
+2. Admin meninjau pendaftaran SPPG beserta dokumen proposal dan foto dapur.
+3. Admin menyetujui atau menolak pendaftaran.
+4. Setelah disetujui, akun login SPPG dibuat dan kredensial dikirim kepada PIC.
+5. Admin memantau status kemitraan dan aktivitas program melalui dashboard pengelola.
+
+### SPPG / Mitra
+
+1. PIC mendaftarkan SPPG dan menunggu persetujuan Admin BGN.
+2. Setelah memperoleh akun, petugas login ke NutriSafe Mitra.
+3. SPPG memilih dan menghubungkan sekolah binaan.
+4. Petugas memeriksa data siswa serta alergi dari sekolah binaan.
+5. Petugas mengisi data menu, jumlah porsi, dan informasi gizi per porsi.
+6. Foto menu dikirim untuk dianalisis oleh AI.
+7. SPPG membandingkan input internal dengan hasil deteksi bahan dan nutrisi AI.
+8. Jika aman, laporan menu harian dikirim dan disimpan.
+9. Makanan dikirim ke sekolah disertai laporan pengiriman dan dokumentasi.
+10. SPPG memantau penerimaan, komplain sekolah, masalah makanan, dan notifikasi.
+
+### Sekolah
+
+1. Sekolah mendaftarkan akun dan melengkapi profil sekolah.
+2. Sekolah mencatat data siswa, termasuk kebutuhan dan jenis alergi.
+3. Data alergi tersedia bagi SPPG yang menjadi mitra sekolah.
+4. Sekolah menerima notifikasi ketika makanan sedang dikirim.
+5. Petugas sekolah mengonfirmasi penerimaan dan jumlah porsi.
+6. Jika ditemukan masalah—misalnya makanan basi, kekurangan porsi, keterlambatan, atau risiko alergen—sekolah mengirim laporan.
+7. Laporan tersebut muncul pada aplikasi SPPG untuk ditindaklanjuti.
+
+### Masyarakat / Umum
+
+1. Pengguna mengakses kanal umum NutriSafe.
+2. Pengguna melihat informasi program yang tersedia.
+3. Jika menemukan masalah makanan, pengguna mengirim laporan beserta deskripsi dan bukti.
+4. Laporan diteruskan kepada pihak yang relevan melalui backend NutriSafe.
+
+## Alur data utama
+
+```mermaid
+flowchart LR
+    A[Admin BGN] -->|Menyetujui pendaftaran| B[SPPG]
+    C[Sekolah] -->|Data siswa dan alergi| B
+    B -->|Menu, scan AI, dan laporan harian| D[(NutriSafe API)]
+    B -->|Pengiriman makanan| C
+    C -->|Konfirmasi penerimaan dan komplain| D
+    E[Masyarakat] -->|Laporan makanan| D
+    D -->|Notifikasi dan status| A
+    D -->|Notifikasi dan riwayat| B
+    D -->|Status distribusi| C
+```
+
+## Teknologi
+
+### Mobile application
+
+| Teknologi | Kegunaan |
+|---|---|
+| **Flutter & Dart** | Aplikasi lintas platform Android, iOS, dan Web. |
+| **Material 3** | Sistem desain dan komponen antarmuka responsif. |
+| **flutter_bloc** | Pengelolaan state autentikasi dan sesi. |
+| **go_router** | Navigasi deklaratif, protected route, dan shell navigation. |
+| **Dio** | HTTP client, multipart upload, interceptor autentikasi, dan timeout. |
+| **get_it** | Dependency injection dan lifecycle repository. |
+| **flutter_secure_storage** | Penyimpanan token autentikasi secara aman. |
+| **image_picker & file_selector** | Pengambilan foto dan pemilihan dokumen. |
+| **flutter_svg** | Rendering aset ikon SVG. |
+
+### Backend dan layanan terintegrasi
+
+- REST API produksi di `https://api.nutrisafe.id`.
+- Backend menggunakan Go dan Fiber.
+- JWT Bearer Authentication.
+- Multipart upload untuk foto dan dokumentasi.
+- Analisis foto menu berbasis AI/Gemini pada layanan backend.
+
+## Arsitektur aplikasi
 
 ```text
 lib/
-  main.dart                         Bootstrap and composition root
-  app/
-    app.dart                        MaterialApp, provider, router lifecycle
-    di/dependencies.dart            get_it registration and disposal
-    router/app_router.dart          Redirect policy, splash, shell, fallback
-    theme/app_theme.dart            Shared Material 3 theme
-  core/
-    error/app_failure.dart          Failure categories and safe UI messages
-    network/api_config.dart         Build-time API configuration
-    network/dio_factory.dart        Timeouts, authorization, error interceptor
-    storage/token_store.dart       Injectable secure token persistence
-  features/
-    auth/
-      data/auth_gateway.dart        Contract-independent login boundary
-      data/session_repository.dart  Local token/session persistence
-      presentation/login_page.dart  Availability placeholder, no fake login
-      presentation/session_cubit.dart
+├── app/
+│   ├── di/                 # Registrasi dependency
+│   ├── router/             # Routing dan proteksi sesi
+│   └── theme/              # Tema aplikasi
+├── core/
+│   ├── error/              # Normalisasi kegagalan
+│   ├── network/            # Dio, konfigurasi API, interceptor
+│   ├── storage/            # Secure token storage
+│   └── widgets/            # Komponen bersama
+└── features/
+    ├── allergy_monitoring/
+    ├── auth/
+    ├── food_issues/
+    ├── food_report/
+    ├── food_scan/
+    ├── notifications/
+    ├── partnership/
+    ├── profile/
+    └── schools/
 ```
 
-Add constants, widgets, utils, domain layers, and use cases only when actual code
-needs them. The starter counter and its obsolete test have been replaced; native
-platform scaffolding and existing lint configuration are retained.
+Setiap fitur memisahkan lapisan data, domain bila diperlukan, dan presentation. Repository menerima `Dio` melalui constructor injection; UI tidak mengakses service locator secara langsung.
 
-## Dependencies
+## Endpoint yang digunakan aplikasi Mitra
 
-Added flutter_bloc, go_router, Dio, get_it, equatable, and flutter_secure_storage.
-flutter_secure_storage provides platform secure storage rather than preferences
-for tokens. Existing cupertino_icons and flutter_lints are retained. Resolved
-versions are committed in pubspec.lock. No GetX or code generation is used.
+```text
+POST   /login
+GET    /sppg/profile
+PUT    /sppg/profile
+GET    /sppg/status
+GET    /sppg/available-schools
+POST   /sppg/assign-schools
+GET    /sppg/schools
+GET    /sppg/allergy-dashboard
+POST   /sppg/scan
+POST   /sppg/scan/recommend
+POST   /sppg/menu-reports
+GET    /sppg/menu-reports/today
+GET    /sppg/delivery-reports
+GET    /sppg/delivery-reports/:id
+POST   /sppg/delivery-reports
+POST   /sppg/food-problems
+GET    /sppg/food-reports
+GET    /notifications
+GET    /notifications/unread-count
+PATCH  /notifications/:id/read
+PATCH  /notifications/read-all
+```
 
-## Routing and session lifecycle
+## Menjalankan proyek
 
-The app starts at `/splash` while SessionCubit restores storage. A missing/blank
-token routes to `/login`; a stored token routes to `/` inside the application
-shell. All other locations require an authenticated local session. Authenticated
-unknown locations show the not-found page. Anonymous unknown locations redirect
-to login. Login and splash redirect to home after authentication. Requested deep
-links are not retained across login in this foundation.
+### Prasyarat
 
-SessionCubit has no navigation dependency. Its stream refreshes go_router through
-a disposable ChangeNotifier bridge. BlocProvider exposes the injected singleton
-without owning it; get_it owns and closes it. Tests dispose app/router before
-calling `di.reset()`.
+- Flutter SDK yang kompatibel dengan Dart `^3.13.4`.
+- Android Studio/Android SDK untuk target Android.
+- Perangkat atau emulator dengan koneksi internet.
 
-`AuthGateway<Credentials>` is the deliberately unimplemented backend boundary.
-When the contract arrives, define real credential types and a Dio-backed gateway,
-normalize the documented response to an access token, and enforce Mitra/SPPG
-access according to the backend contract. Add a login Cubit/repository as needed;
-only successful real authentication may call `acceptAuthenticatedToken`.
-Never insert demonstration tokens into the production app.
+### Instalasi
 
-Restoration currently means a token exists locally, not that the backend has
-validated it. The backend remains authoritative. Refresh, expiry parsing, remote
-validation, role claims, and server logout/revocation are deferred until their
-contracts exist. Logout currently clears the local session only.
-
-Storage mutations are serialized. Authenticated 401 responses clear only the
-session whose token was sent, protecting a newer login from delayed responses.
-Storage failures block protected routes and offer a clear-session retry; failed
-storage deletion is never reported as successful logout.
-
-## Networking and errors
-
-UI -> Cubit/Bloc -> feature repository -> data source/Dio -> backend.
-Repositories catch technical failures and map them with `AppFailure.from` before
-emitting failure state. UI renders `failure.message`, never exception strings or
-backend response bodies. Supported categories: network, timeout, unauthorized,
-server, unexpected, configuration, and storage.
-
-Dio preserves response data for feature-specific decoding; no global response
-schema is invented. Defaults include 15-second connection and 30-second send/read
-timeouts. The bearer header is attached only for the configured HTTPS origin.
-Automatic redirects are disabled. Public calls such as a future login request use
-`Options(extra: {'requiresAuth': false})`. No automatic retry, token refresh, or
-request logging is installed. Do not log request options containing credentials.
-The bearer scheme is a centralized integration assumption to confirm against the
-backend contract. Additional interceptors belong in the factory.
-
-Android release network permission is enabled and application backup is disabled
-for secure token storage. Native secure storage and networking must still be
-smoke-tested on Android/iOS hardware before release. Follow the package's platform
-requirements if enabling additional targets:
-https://pub.dev/packages/flutter_secure_storage
-
-## Adding the next SPPG feature
-
-1. Obtain its real backend endpoint, authorization, and payload contract.
-2. Add `features/<feature>/data` and `presentation` with only needed models,
-   repository/data source, Cubit/state, and page. Add domain only for reusable
-   business rules or a useful independent boundary.
-3. Constructor-inject Dio into data sources, repositories into Cubits, and provide
-   Cubits at the route boundary. Register repositories as lazy singletons and
-   page-owned Cubits as factories in `app/di/dependencies.dart`.
-4. Construct dependencies in the composition layer and pass them into pages or
-   route builders. Do not call get_it from UI widgets.
-5. Add the protected route under ShellRoute. Keep navigation in presentation.
-6. Test repository response/error mapping and meaningful state transitions, plus
-   one page integration test where appropriate.
-
-Use Cubit for fetching lists, dashboard/profile state, or straightforward updates.
-Use Bloc when meaningful events and complex transitions/concurrency justify it.
-Use local StatefulWidget state for password visibility, expansion, tabs, and
-transient form UI. Do not add a Cubit for every widget.
-
-## Verification
-
-```sh
+```bash
+git clone https://github.com/AkbarFelda/nutrisafe_mitra.git
+cd nutrisafe_mitra
 flutter pub get
-dart format lib test
+flutter run
+```
+
+Secara default aplikasi menggunakan API produksi `https://api.nutrisafe.id`.
+
+Untuk memakai backend lain:
+
+```bash
+flutter run --dart-define=API_BASE_URL=https://alamat-backend.example
+```
+
+Mock API hanya aktif jika diminta secara eksplisit:
+
+```bash
+flutter run --dart-define=USE_MOCK_API=true
+```
+
+## Build APK
+
+```bash
+flutter build apk --release
+```
+
+Hasil build tersedia di `build/app/outputs/flutter-apk/app-release.apk`.
+
+## Pengujian dan kualitas
+
+```bash
 flutter analyze
 flutter test
 ```
 
-Tests use in-memory storage and an HTTP adapter, never a real authentication API.
-They cover session persistence, restoration, logout, storage failure recovery,
-stale 401s, protected routes, not-found navigation, header isolation, configuration
-failure, response decoding, and error classification.
+Pengujian mencakup autentikasi, sesi, repository API, parsing respons aktual, navigasi, scanner, riwayat dan detail pengiriman, laporan bermasalah, monitoring alergi, notifikasi, serta layout responsif pada berbagai ukuran layar dan pembesaran teks.
+
+## Keamanan
+
+- Token disimpan menggunakan native secure storage.
+- Authorization header hanya dikirim ke origin API yang telah dikonfigurasi.
+- Request publik tidak membawa bearer token.
+- Respons `401` menghapus sesi yang sesuai tanpa merusak sesi login yang lebih baru.
+- Kredensial dan secret tidak disimpan di source code.
+- Backup aplikasi Android dinonaktifkan untuk mengurangi risiko kebocoran token.
+
+## Catatan implementasi
+
+- Endpoint rekomendasi menu dapat membalas `503` ketika fitur ML belum diaktifkan oleh backend; aplikasi menampilkannya sebagai fitur yang belum tersedia, bukan kegagalan scan.
+- Komplain dari sekolah pada `/sppg/food-reports` berbeda dari laporan menu harian pada `/sppg/menu-reports`.
+- Data nutrisi pada `menu_detail` merupakan total seluruh porsi, sedangkan `kalori_per_porsi` dikirim terpisah oleh backend.
+
+---
+
+<div align="center">
+  <strong>NutriSafe — makanan bergizi, aman, terdokumentasi, dan dapat ditelusuri.</strong>
+</div>
